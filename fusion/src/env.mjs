@@ -64,7 +64,7 @@ if (!!process.env.SKIP_ENV_VALIDATION == false) {
 			if (typeof prop !== "string") return undefined;
 			// Throw a descriptive error if a server-side env var is accessed on the client
 			// Otherwise it would just be returning `undefined` and be annoying to debug
-			if (!isServer && !prop.startsWith("NEXT_PUBLIC_"))
+			if (!isServer)
 				throw new Error(
 					process.env.NODE_ENV === "production"
 						? "❌ Attempted to access a server-side environment variable on the client"

@@ -11,14 +11,20 @@ datasource db {
     directUrl = env("DIRECT_URL")
 }
 
+//* User models
 model User {
-    id          String        @id @default(cuid())
-    email       String        @unique
-    password    String
-    fname       String
-    lname       String
-    roles       Role[]        @default([USER])
-    Reservation Reservation[]
+    id           String        @id @unique @default(cuid())
+    email        String        @unique
+    password     String
+    fname        String
+    lname        String
+    roles        Role[]        @default([USER])
+    reservations Reservation[]
+    properties   Property[]
+    ChatUsers    ChatUser[]
+    Review       Review[]
+
+    @@index([id])
 }
 
 enum Role {
@@ -27,7 +33,111 @@ enum Role {
     SUPPORT
 }
 
+//* ChatTicket models
+model ChatTicket {
+    id   String   @id @default(cuid())
+    type ChatType
+
+    chatUsers ChatUser[]
+}
+
+enum ChatType {
+    TOSUPPORT
+    TOPROPERTY
+}
+
+model ChatUser {
+    id           String     @unique @default(cuid())
+    chatTicket   ChatTicket @relation(fields: [chatTicketId], references: [id])
+    chatTicketId String     @map("chat_ticket_id")
+    user         User       @relation(fields: [userId], references: [id])
+    userId       String
+    chatRole     ChatRole
+    Message      Message[]
+
+    @@id([id, chatTicketId, userId])
+}
+
+enum ChatRole {
+    RECEIVER
+    SENDER
+}
+
+//TODO MESSAGES AND REVIEWS
+model Message {
+    id         String   @id @unique @default(cuid())
+    chatUserId String
+    content    String
+    chatUser   ChatUser @relation(fields: [chatUserId], references: [id])
+}
+
+model Review {
+    id         String   @unique @default(uuid())
+    propertyId String
+    userId     String
+    rating     Int      @default(5) @db.SmallInt
+    content    String
+    property   Property @relation(fields: [propertyId], references: [id])
+    user       User     @relation(fields: [userId], references: [id])
+
+    @@id([id, propertyId, userId])
+}
+
+//* Property/Hotel models
 model Reservation {
-    id   String @id @default(cuid())
-    user User   @relation(references: [id], fields: [userId])
+    id     String @default(cuid())
+    userId String
+    roomId String
+    price  Float
+    room   Room   @relation(fields: [roomId], references: [id])
+    user   User   @relation(fields: [userId], references: [id])
+
+    @@id([id, userId, roomId])
+    @@index([id, userId, roomId])
+}
+
+model Property {
+    id          String   @unique @default(cuid())
+    ownerId     String
+    description String
+    Owner       User     @relation(fields: [ownerId], references: [id])
+    Room        Room[]
+    Review      Review[]
+
+    @@id([id, ownerId])
+}
+
+model Room {
+    id           String        @id @unique @default(cuid())
+    hotelId      String
+    quantity     Int
+    available    Int
+    maxGuests    Int           @map("max_guests")
+    price        Float
+    Reservations Reservation[]
+    Facilities   Facility[]
+    Hotel        Property      @relation(fields: [hotelId], references: [id])
+}
+
+model Facility {
+    id          String   @id @default(cuid())
+    iconId      String?
+    description String
+    category    Category
+    Icon        Icon?    @relation(fields: [iconId], references: [id])
+    Room        Room[]
+}
+
+enum Category {
+    ROOM
+    FOOD
+    BEVERAGES
+    WELLNESS
+    MISCELLANEOUS
+}
+
+model Icon {
+    id            String     @id @default(cuid())
+    iconShorthand String     @map("icon_shorthand")
+    Facilities    Facility[]
 }
