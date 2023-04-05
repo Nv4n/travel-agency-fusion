@@ -21,8 +21,8 @@ model User {
     roles        Role[]        @default([USER])
     reservations Reservation[]
     properties   Property[]
-    ChatUsers    ChatUser[]
-    Review       Review[]
+    chatUsers    ChatUser[]
+    reviews      Review[]
 
     @@index([id])
 }
@@ -53,7 +53,7 @@ model ChatUser {
     user         User       @relation(fields: [userId], references: [id])
     userId       String
     chatRole     ChatRole
-    Message      Message[]
+    messages     Message[]
 
     @@id([id, chatTicketId, userId])
 }
@@ -63,7 +63,6 @@ enum ChatRole {
     SENDER
 }
 
-//TODO MESSAGES AND REVIEWS
 model Message {
     id         String   @id @unique @default(cuid())
     chatUserId String
@@ -100,9 +99,9 @@ model Property {
     id          String   @unique @default(cuid())
     ownerId     String
     description String
-    Owner       User     @relation(fields: [ownerId], references: [id])
-    Room        Room[]
-    Review      Review[]
+    owner       User     @relation(fields: [ownerId], references: [id])
+    rooms       Room[]
+    reviews     Review[]
 
     @@id([id, ownerId])
 }
@@ -114,9 +113,9 @@ model Room {
     available    Int
     maxGuests    Int           @map("max_guests")
     price        Float
-    Reservations Reservation[]
-    Facilities   Facility[]
-    Hotel        Property      @relation(fields: [hotelId], references: [id])
+    reservations Reservation[]
+    facilities   Facility[]
+    hotel        Property      @relation(fields: [hotelId], references: [id])
 }
 
 model Facility {
@@ -124,8 +123,8 @@ model Facility {
     iconId      String?
     description String
     category    Category
-    Icon        Icon?    @relation(fields: [iconId], references: [id])
-    Room        Room[]
+    icon        Icon
+    rooms       Room[]
 }
 
 enum Category {
@@ -136,8 +135,18 @@ enum Category {
     MISCELLANEOUS
 }
 
-model Icon {
-    id            String     @id @default(cuid())
-    iconShorthand String     @map("icon_shorthand")
-    Facilities    Facility[]
+enum Icon {
+    BED
+    WIFI
+    FITNESS
+    RESTAURANT
+    NOSMOKE
+    SOUNDPROOF
+    BAR
+    AC
+    PARKING
+    SPA
+    BREAKFAST
+    FRIDGE
+    KITCHEN
 }
