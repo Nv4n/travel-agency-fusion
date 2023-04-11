@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import "../styles/globals.css";
 
 const App = () => {
-	return <h1>HEY FIRST RUN</h1>;
+	return <h1 className="text-9xl">hello world</h1>;
 };
 
 const container = document.getElementById("root");
