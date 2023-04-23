@@ -1,9 +1,10 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import "../styles/globals.css";
+import { Hotels } from "./Hotels";
 
 const App = () => {
-	return <h1 className="text-9xl">hello world</h1>;
+	return <Hotels></Hotels>;
 };
 
 const container = document.getElementById("root");
