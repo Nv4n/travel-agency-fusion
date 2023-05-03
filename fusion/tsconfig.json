@@ -29,12 +29,10 @@
   },
   "include": [
     ".eslintrc.cjs",
-    "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "**/*.cjs",
-    "**/*.mjs",
-    "vite.config.js"
+    "**/*.mjs"
   ],
   "exclude": [
     "node_modules"

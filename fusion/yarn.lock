@@ -451,6 +451,11 @@
   resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.5.0.tgz#57618e57942a5f0131374a9fdb0167e25a117fdc"
   integrity sha512-bkUDCp8o1MvFO+qxkODcbhSqRa6P2GXgrGZVpt0dCXNW2HCSCqYI0ZoAqEOSAjRWmmlKcYgFvN4B4S+zo/f8kg==
 
+"@t3-oss/env-core@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@t3-oss/env-core/-/env-core-0.2.2.tgz#e216ce44d4618d6f69c240efc02bd9e15221035b"
+  integrity sha512-Jiuph14/L3L9EDaU0O0YiLeaKUcWA9c3mWYuKem8+L64i3Iwz+IbKdl5Jp4cx+JbOsS/aptwGZplnxSHhm2gMQ==
+
 "@tabler/icons-react@^2.17.0":
   version "2.17.0"
   resolved "https://registry.yarnpkg.com/@tabler/icons-react/-/icons-react-2.17.0.tgz#8d7b33958bdef17c2aadaa0899b87a259c9f5f01"
