@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --open",
     "build": "vite build",
     "preview": "vite preview",
     "postinstall": "prisma generate",
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@types/eslint": "^8.37.0",
+    "@types/express": "^4.17.17",
     "@types/node": "^18.15.13",
     "@types/prettier": "^2.7.2",
     "@types/react": "^18.0.38",

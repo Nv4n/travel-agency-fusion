@@ -1,5 +1,5 @@
-import { ZodError, z } from "zod";
 import { createEnv } from "@t3-oss/env-core";
+import { ZodError, z } from "zod";
 
 export const env = createEnv({
 	clientPrefix: "VITE_",
