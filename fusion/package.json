@@ -6,14 +6,12 @@
     "client:dev": "vite",
     "server:dev": "ts-node-dev --project tsconfig.server.json src/server/server",
     "client:build": "vite build",
-    "server:build": "tsc --project tsconfig.server.json",
+    "server:build": "npx tsc --project tsconfig.server.json",
     "dev": "concurrently \"yarn run server:dev\" \"yarn run client:dev\"",
     "build": "yarn run server:build && yarn run client:build",
     "serve": "vite preview",
     "start": "node dist/server.js",
-    "postinstall": "prisma generate",
-    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --quiet",
-    "typecheck": "tsc --noEmit"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^4.14.0",
@@ -47,5 +45,7 @@
     "typescript": "^5.0.4",
     "vite": "^4.3.5"
   },
+  "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --quiet",
+  "typecheck": "tsc --noEmit",
   "packageManager": "yarn@3.5.1"
 }
