@@ -1,14 +1,25 @@
 {
-    "extends": "./tsconfig.json",
     "compilerOptions": {
-        "outDir": "dist",
-        "module": "ESNext",
-        "noEmit": false
+        "target": "ESNext",
+        "useDefineForClassFields": true,
+        "lib": [
+            "DOM",
+            "DOM.Iterable",
+            "ESNext"
+        ],
+        "allowJs": false,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "module": "CommonJS",
+        "moduleResolution": "Node",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true
     },
     "include": [
-        "src/*.ts"
-    ],
-    "exclude": [
-        "src/app"
+        "src"
     ]
 }
