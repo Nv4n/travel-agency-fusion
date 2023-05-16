@@ -1,5 +1,5 @@
 import express from "express";
-import router from "./lib/router";
+import router from "./routers/router";
 import ViteExpress from "vite-express";
 
 const app = express();
