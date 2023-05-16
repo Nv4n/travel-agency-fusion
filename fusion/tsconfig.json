@@ -36,7 +36,7 @@
     "**/*.cjs",
     "**/*.mjs",
     "vite.config.ts",
-    "src"
+    "src/server/*"
   ],
   "exclude": [
     "node_modules"

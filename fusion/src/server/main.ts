@@ -4,6 +4,8 @@ import ViteExpress from "vite-express";
 
 const app = express();
 
+app.use(express.static("public"));
+
 // Use vite's connect instance as middleware
 app.use("/api", router);
 

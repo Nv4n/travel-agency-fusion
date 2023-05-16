@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "nodemon src/server/main.ts -w src/server",
-    "start": "NODE_ENV=production ts-node src/server/server.ts",
-    "build": "vite build",
+    "start": "NODE_ENV=production ts-node src/server/main.ts",
+    "build": "tsc --project tsconfig.server.json && vite build",
     "postinstall": "prisma generate"
   },
   "dependencies": {
