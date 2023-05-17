@@ -5,33 +5,22 @@ import useDebounce from "../../hooks/useDebounce";
 
 interface InputFormProps {
 	labelText: string;
-	register: ReturnType<UseFormRegister<FormData>>;
-	trigger: ReturnType<UseFormTrigger<FormData>>;
+	register: UseFormRegister<FormData>;
+	trigger: UseFormTrigger<FormData>;
+	field: keyof FormData;
 }
 
-export const FormInput = ({ labelText, register, trigger }: InputFormProps) => {
+export const FormInput = ({
+	labelText,
+	register,
+	trigger,
+	field,
+}: InputFormProps) => {
 	const id = useId();
-	const [value, setValue] = useState<string>("");
-	const debouncedValue = useDebounce<string>(value, 500);
-
-	const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-		setValue(event.target.value);
-	};
-
-	useEffect(() => {
-		async () => {
-			await trigger;
-		};
-	}, [debouncedValue]);
 	return (
 		<>
 			<label htmlFor={id}>{labelText}</label>
-			<input
-				className="bg-slate-600"
-				id={id}
-				{...register}
-				onChange={handleChange}
-			/>
+			<input className="bg-zinc-300" id={id} {...register(field)} />
 		</>
 	);
 };

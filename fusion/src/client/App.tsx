@@ -1,16 +1,14 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Hotels } from "../pages/Hotels";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { LoginForm } from "../components/Forms/LoginForm";
+import { Hotels } from "../pages/Hotels";
+
+const router = createBrowserRouter([
+	{ path: "/*", element: <Hotels></Hotels> },
+	{ path: "/login", element: <LoginForm></LoginForm> },
+]);
 
 const App = () => {
-	return (
-		<BrowserRouter>
-			<Routes>
-				<Route path="/" element={<Hotels></Hotels>}></Route>
-				<Route path="/login" element={<LoginForm></LoginForm>}></Route>
-			</Routes>
-		</BrowserRouter>
-	);
+	return <RouterProvider router={router}></RouterProvider>;
 };
 
 export default App;
