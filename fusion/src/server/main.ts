@@ -2,15 +2,16 @@ import express from "express";
 import router from "./routers/router";
 import ViteExpress from "vite-express";
 
-const app = express();
+const MODE = !(process.env.NODE_ENV === "production")
+	? "development"
+	: "production";
 
-app.use(express.static("public"));
+const app = express();
+ViteExpress.config({ mode: MODE });
+app.use(ViteExpress.static());
 
 // Use vite's connect instance as middleware
 app.use("/api", router);
+ViteExpress.listen(app, 3000);
 
-ViteExpress.listen(app, 3000, () =>
-	console.log("Server is listening on port 3000...")
-);
-
-module.exports = [app, ViteExpress];
+module.exports = [ViteExpress];
