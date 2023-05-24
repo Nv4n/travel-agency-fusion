@@ -1,4 +1,8 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import {
+	Navigate,
+	RouterProvider,
+	createBrowserRouter,
+} from "react-router-dom";
 import { LoginForm } from "../components/Forms/LoginForm";
 import { Hotels } from "../pages/Hotels";
 

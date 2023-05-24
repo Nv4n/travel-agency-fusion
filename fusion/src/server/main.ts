@@ -1,17 +1,21 @@
 import express from "express";
 import router from "./routers/router";
-import ViteExpress from "vite-express";
+import path from "path";
+import { t3Env } from "../t3Env";
 
-const MODE = !(process.env.NODE_ENV === "production")
-	? "development"
-	: "production";
+const MODE = t3Env.NODE_ENV;
 
-const app = express();
-ViteExpress.config({ mode: MODE });
-app.use(ViteExpress.static());
-
+export const app = express();
+app.get("/api", (req, res) => {
+	res.json({ message: "It works!" });
+});
 // Use vite's connect instance as middleware
 app.use("/api", router);
-ViteExpress.listen(app, 3000);
 
-module.exports = [ViteExpress];
+if (MODE === "production") {
+	console.log(`__dirname = ${__dirname}`);
+	app.use(express.static(path.join(__dirname, "..", "dist")));
+	app.use(express.static(path.join(__dirname, "..", "public")));
+
+	app.listen(5000, () => console.log("listening on port 5000"));
+}

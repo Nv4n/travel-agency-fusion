@@ -8,7 +8,7 @@
       "ESNext"
     ],
     "allowSyntheticDefaultImports": true,
-    "module": "CommonJS",
+    "module": "ESNext",
     "allowJs": true,
     "checkJs": true,
     "skipLibCheck": true,
