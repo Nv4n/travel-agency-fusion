@@ -1,6 +1,6 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import { app } from "./src/server/main";
+import app from "./src/server/main";
 import { type Express } from "express-serve-static-core";
 import "./src/t3Env";
 
