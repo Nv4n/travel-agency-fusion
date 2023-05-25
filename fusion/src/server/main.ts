@@ -17,8 +17,8 @@ if (MODE === "production") {
 	app.use(express.static(path.join(__dirname, "..", "dist")));
 	app.use(express.static(path.join(__dirname, "..", "public")));
 
-	app.set("port", 8080);
-	app.listen(8080, () => console.log("listening on port 5000"));
+	// app.set("port", 6000);
+	app.listen(6000, () => console.log("listening on port 6000"));
 }
 
 export default app;
