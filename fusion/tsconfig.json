@@ -37,7 +37,7 @@
     "**/*.mjs",
     "vite.config.ts",
     "src/server/*"
-  ],
+, "src/api/routers"  ],
   "exclude": [
     "node_modules"
   ]
