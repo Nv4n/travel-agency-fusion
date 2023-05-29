@@ -6,9 +6,10 @@ generator client {
 }
 
 datasource db {
-    provider  = "postgresql"
-    url       = env("VITE_DATABASE_URL")
-    directUrl = env("VITE_DIRECT_URL")
+    provider     = "postgresql"
+    url          = env("VITE_DATABASE_URL")
+    directUrl    = env("VITE_DIRECT_URL")
+    relationMode = "prisma"
 }
 
 //* User models
@@ -59,7 +60,7 @@ enum ChatType {
 }
 
 model ChatUser {
-    id       String    @unique @default(cuid())
+    id       String    @id @default(cuid())
     chatRole ChatRole
     messages Message[]
 
@@ -68,7 +69,8 @@ model ChatUser {
     user         User       @relation(fields: [userId], references: [id])
     userId       String
 
-    @@id([id, chatTicketId, userId])
+    @@index([chatTicketId])
+    @@index([userId])
 }
 
 enum ChatRole {
@@ -78,71 +80,74 @@ enum ChatRole {
 
 model Message {
     id      String @id @default(cuid())
-    content String //@db.VarChar(512)
+    content String
 
-    chatUser   ChatUser @relation(fields: [chatUserId], references: [id])
+    chatUser   ChatUser @relation(fields: [chatUserId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     chatUserId String
+
+    @@index([chatUserId])
 }
 
 model Review {
-    id      String @unique @default(uuid())
+    id      String @id @default(uuid())
     rating  Int    @default(5) @db.SmallInt
     content String //@db.VarChar(255)
 
     createdAt DateTime @default(now())
 
-    property   Property @relation(fields: [propertyId], references: [id])
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     propertyId String
-    user       User     @relation(fields: [userId], references: [id])
+    user       User     @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
     userId     String
 
-    @@id([id, propertyId, userId])
+    @@index([propertyId])
+    @@index([userId])
 }
 
 //* Property/Hotel models
 model Reservation {
-    id    String   @default(cuid())
+    id    String   @id @default(cuid())
     price Float
     from  DateTime
     to    DateTime
 
-    room   Room   @relation(fields: [roomId], references: [id])
+    room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     roomId String
-    user   User   @relation(fields: [userId], references: [id])
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     userId String
 
-    @@id([id, userId, roomId])
-    @@index([id, userId, roomId])
+    @@index([roomId])
+    @@index([userId])
 }
 
 model Property {
-    id          String @unique @default(cuid())
+    id          String @id @default(cuid())
     description String
 
-    owner   User     @relation(fields: [ownerId], references: [id])
+    owner   User     @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     ownerId String
     rooms   Room[]
     reviews Review[]
 
-    @@id([id, ownerId])
+    @@index([ownerId])
 }
 
 model Room {
     id        String @id @unique @default(cuid())
     quantity  Int
-    available Int //not sure i need this
     maxGuests Int    @map("max_guests")
     price     Float
 
-    hotel        Property      @relation(fields: [hotelId], references: [id])
+    hotel        Property      @relation(fields: [hotelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     hotelId      String
     reservations Reservation[]
     facilities   Facility[]
+
+    @@index([hotelId])
 }
 
 model Facility {
     id          String   @id @default(cuid())
-    iconId      String?
     description String
     category    Category
     icon        Icon

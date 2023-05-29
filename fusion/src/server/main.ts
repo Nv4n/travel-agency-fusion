@@ -1,7 +1,7 @@
 import express from "express";
-import router from "./routers/router";
 import path from "path";
 import { t3Env } from "../t3Env";
+import router from "./routers/router";
 
 const MODE = t3Env.NODE_ENV;
 
@@ -18,7 +18,6 @@ if (MODE === "production") {
 	app.use(express.static(path.join(__dirname, "..", "public")));
 
 	app.set("port", 6000);
-	// app.listen(6000, () => console.log("listening on port 6000"));
 }
 
 export default app;
