@@ -10,7 +10,7 @@ app.get("/api", (req, res) => {
 	res.json({ message: "It works!" });
 });
 // Use vite's connect instance as middleware
-app.use("/api", router);
+app.use("/api/users", router);
 
 if (MODE === "production") {
 	console.log(`__dirname = ${__dirname}`);
