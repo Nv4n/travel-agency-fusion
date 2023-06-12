@@ -1,14 +1,8 @@
-import {
-	Navigate,
-	RouterProvider,
-	createBrowserRouter,
-} from "react-router-dom";
-import { LoginForm } from "../components/Forms/LoginForm";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { Hotels } from "../pages/Hotels";
 
 const router = createBrowserRouter([
 	{ path: "/*", element: <Hotels></Hotels> },
-	{ path: "/login", element: <LoginForm></LoginForm> },
 ]);
 
 const App = () => {

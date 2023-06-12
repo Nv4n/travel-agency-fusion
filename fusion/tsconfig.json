@@ -24,6 +24,9 @@
     "noUncheckedIndexedAccess": true,
     "baseUrl": ".",
     "paths": {
+      "@/*": [
+        "./src/*"
+      ],
       "~/*": [
         "./src/*"
       ]
@@ -36,8 +39,9 @@
     "**/*.cjs",
     "**/*.mjs",
     "vite.config.ts",
-    "src/server/*"
-, "src/api/routers"  ],
+    "src/server/*",
+    "src/server/routers"
+  ],
   "exclude": [
     "node_modules"
   ]
