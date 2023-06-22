@@ -8,7 +8,7 @@ generator client {
 generator zod {
     provider                  = "zod-prisma-types"
     output                    = "../src/zod" // (default) the directory where generated zod schemas will be saved
-    createRelationValuesTypes = true
+    createRelationValuesTypes = false
 }
 
 datasource db {
