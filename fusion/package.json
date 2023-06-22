@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start": "npx http-server ./dist",
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview",
     "db-seed": "NODE_ENV=development prisma db seed",
     "postinstall": "npx prisma generate"
