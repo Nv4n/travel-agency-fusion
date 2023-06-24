@@ -58,11 +58,15 @@ export default {
 			},
 			keyframes: {
 				"accordion-down": {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					//@ts-ignore
 					from: { height: 0 },
 					to: { height: "var(--radix-accordion-content-height)" },
 				},
 				"accordion-up": {
 					from: { height: "var(--radix-accordion-content-height)" },
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					//@ts-ignore
 					to: { height: 0 },
 				},
 			},
