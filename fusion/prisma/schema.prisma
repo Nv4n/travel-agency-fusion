@@ -5,12 +5,6 @@ generator client {
     provider = "prisma-client-js"
 }
 
-generator zod {
-    provider                  = "zod-prisma-types"
-    output                    = "../src/zod" // (default) the directory where generated zod schemas will be saved
-    createRelationValuesTypes = false
-}
-
 datasource db {
     provider     = "postgresql"
     url          = env("VITE_DATABASE_URL")
