@@ -30,12 +30,12 @@ export default defineConfig({
 		react(),
 	],
 	server: {
-		hmr: {
-			port: 443,
-		},
 		watch: {
 			usePolling: true,
 		},
+		host: true,
+		strictPort: true,
+		port: 5173,
 	},
 	resolve: {
 		alias: {
