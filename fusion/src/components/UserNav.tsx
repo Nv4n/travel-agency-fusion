@@ -1,3 +1,6 @@
+import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
+import { Button } from "./ui/button";
+
 export const UserNav = () => {
     return(
 	<DropdownMenu>
