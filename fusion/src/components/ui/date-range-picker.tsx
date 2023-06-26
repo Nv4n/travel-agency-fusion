@@ -1,8 +1,8 @@
 "use client";
 
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
 import * as React from "react";
-import { type DateRange } from "react-day-picker";
+import { type SelectRangeEventHandler, type DateRange } from "react-day-picker";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -14,14 +14,16 @@ import {
 import { cn } from "@/lib/utils";
 import { IconCalendar } from "@tabler/icons-react";
 
+interface DatePickerRangeProps extends React.HTMLAttributes<HTMLDivElement> {
+	date: DateRange | undefined;
+	setDate: SelectRangeEventHandler;
+}
+
 export function DatePickerWithRange({
 	className,
-}: React.HTMLAttributes<HTMLDivElement>) {
-	const [date, setDate] = React.useState<DateRange | undefined>({
-		from: new Date(),
-		to: addDays(new Date(), 3),
-	});
-
+	date,
+	setDate,
+}: DatePickerRangeProps) {
 	return (
 		<div className={cn("grid gap-2", className)}>
 			<Popover>

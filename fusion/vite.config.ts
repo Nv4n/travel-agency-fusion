@@ -29,7 +29,7 @@ export default defineConfig({
 		expressPreviewServerPlugin("/", app),
 		expressDevServerPlugin("/", app),
 		react(),
-		FullReload(["src/**/*"], { delay: 1000 }),
+		FullReload(["src/**/*"], { delay: 2000 }),
 	],
 	server: {
 		watch: {
