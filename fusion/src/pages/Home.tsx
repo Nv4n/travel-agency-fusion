@@ -4,10 +4,10 @@ import { SearchHotelForm } from "@/components/forms/SearchHotelForm";
 export const Home = () => {
 	return (
 		<div className="flex h-screen flex-col">
-			<div className="ml-auto space-x-4">
+			<nav className="ml-auto space-x-4">
 				<UserNav />
-			</div>
-			<SearchHotelForm className="ml-auto mt-auto h-max w-max"></SearchHotelForm>
+			</nav>
+			<SearchHotelForm className=" mb-8 ml-auto mr-auto mt-auto h-max w-max"></SearchHotelForm>
 		</div>
 	);
 };

@@ -39,8 +39,10 @@ export const SearchHotelForm = ({
 				from: new Date(),
 				to: addDays(new Date(), 3),
 			},
-			minPrice: minPrice || 10,
-			maxPrice: undefined,
+			priceRange: {
+				minPrice: minPrice || 10,
+				maxPrice: undefined,
+			},
 			people: 1,
 		},
 		mode: "onChange",
@@ -52,8 +54,8 @@ export const SearchHotelForm = ({
 		// ✅ This will be type-safe and validated.
 	};
 
-	const watchMinPrice = form.watch("minPrice");
-	const watchMaxPrice = form.watch("maxPrice");
+	const watchMinPrice = form.watch("priceRange.minPrice");
+	const watchMaxPrice = form.watch("priceRange.maxPrice");
 
 	return (
 		<Form {...form}>
@@ -76,69 +78,126 @@ export const SearchHotelForm = ({
 						</FormItem>
 					)}
 				/>
-				<Popover>
-					<PopoverTrigger>
-						<Button variant={"outline"} className="relative">
-							{watchMinPrice || watchMaxPrice
-								? `${watchMinPrice || ""} BGN - ${
-										watchMaxPrice || ""
-								  } BGN` //
-								: "Price"}
-						</Button>
-					</PopoverTrigger>
-					<PopoverContent className="w-48">
-						<FormField
-							control={form.control}
-							name="minPrice"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel className="sr-only">
-										Min Price
-									</FormLabel>
-									<FormControl>
-										<Input
-											placeholder="from"
-											type="number"
-											step={10}
-											min={minPrice || 10}
-											max={form.getValues("maxPrice")}
-											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="maxPrice"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel className="sr-only">
-										Min Price
-									</FormLabel>
-									<FormControl>
-										<Input
-											placeholder="to"
-											type="number"
-											step={10}
-											min={form.getValues("minPrice")}
-											max={maxPrice}
-											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</PopoverContent>
-				</Popover>
+				<div className="flex items-baseline gap-1">
+					<FormField
+						control={form.control}
+						name="priceRange"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel className="sr-only">
+									Price range
+								</FormLabel>
+								<FormControl>
+									<Popover {...field}>
+										<PopoverTrigger>
+											<Button
+												variant={"outline"}
+												className="relative"
+												type="button"
+											>
+												{watchMinPrice || watchMaxPrice
+													? `${
+															watchMinPrice || ""
+													  } BGN - ${
+															watchMaxPrice || ""
+													  } BGN` //
+													: "Price"}
+											</Button>
+										</PopoverTrigger>
+										<PopoverContent className="z-10 w-48">
+											<FormField
+												control={form.control}
+												name="priceRange.minPrice"
+												render={({ field }) => (
+													<FormItem>
+														<FormLabel className="sr-only">
+															Min Price
+														</FormLabel>
+														<FormControl>
+															<Input
+																placeholder="from"
+																type="number"
+																step={10}
+																min={
+																	minPrice ||
+																	10
+																}
+																max={form.getValues(
+																	"priceRange.maxPrice"
+																)}
+																{...field}
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+											<FormField
+												control={form.control}
+												name="priceRange.maxPrice"
+												render={({ field }) => (
+													<FormItem>
+														<FormLabel className="sr-only">
+															Min Price
+														</FormLabel>
+														<FormControl>
+															<Input
+																placeholder="to"
+																type="number"
+																step={10}
+																min={form.getValues(
+																	"priceRange.minPrice"
+																)}
+																max={
+																	maxPrice &&
+																	Math.min(
+																		maxPrice,
+																		Number.MAX_SAFE_INTEGER
+																	)
+																}
+																{...field}
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+										</PopoverContent>
+									</Popover>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="people"
+						render={({ field }) => (
+							<FormItem className="group relative">
+								<FormLabel className="absolute left-2 transition-transform group-focus-within:-translate-y-2 group-hover:-translate-y-2 ">
+									Guest count
+								</FormLabel>
+								<FormControl>
+									<Input
+										{...field}
+										type="number"
+										step={1}
+										min={1}
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+				</div>
 				<FormField
 					control={form.control}
 					name="dateRange"
 					render={({ field }) => (
-						<FormItem className="flex flex-col">
-							<FormLabel>Date Range</FormLabel>
+						<FormItem className="group relative flex flex-col ">
+							<FormLabel className="roup-focus-within:-translate-y-2 absolute left-2 transition-transform group-hover:-translate-y-2 ">
+								Date Range
+							</FormLabel>
 							<DatePickerWithRange
 								date={field.value}
 								setDate={
@@ -149,27 +208,9 @@ export const SearchHotelForm = ({
 						</FormItem>
 					)}
 				/>
-				<FormField
-					control={form.control}
-					name="people"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Guest count</FormLabel>
-							<FormControl>
-								<Input
-									placeholder="from"
-									{...field}
-									type="number"
-									step={1}
-									min={1}
-								/>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<Button type="submit" onClick={(e) => e.preventDefault()}>
-					Submit
+
+				<Button type="submit" className="w-full">
+					Find your trip
 				</Button>
 			</form>
 		</Form>
