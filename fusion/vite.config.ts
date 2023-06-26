@@ -7,6 +7,7 @@ import {
 } from "vite";
 import app from "./src/server/server";
 import "./src/t3Env";
+import FullReload from "vite-plugin-full-reload";
 
 const expressDevServerPlugin = (path: string, expressApp: typeof app) => ({
 	name: "configure-server",
@@ -28,12 +29,17 @@ export default defineConfig({
 		expressPreviewServerPlugin("/", app),
 		expressDevServerPlugin("/", app),
 		react(),
+		FullReload(["src/**/*"], { delay: 1000 }),
 	],
 	server: {
 		watch: {
 			usePolling: true,
 		},
 		host: true,
+		hmr: {
+			port: 443,
+			timeout: 2000,
+		},
 	},
 	resolve: {
 		alias: {

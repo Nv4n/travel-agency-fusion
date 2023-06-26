@@ -7,10 +7,9 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { IconCash, IconCoin, IconStarFilled } from "@tabler/icons-react";
+import { IconCash, IconStarFilled } from "@tabler/icons-react";
 import { Suspense } from "react";
 import { Link } from "react-router-dom";
-import { Skeleton } from "@/components/ui/skeleton";
 
 interface HotelCardProps {
 	img: string;

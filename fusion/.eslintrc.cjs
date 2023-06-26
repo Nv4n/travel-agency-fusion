@@ -32,6 +32,15 @@ const config = {
 			"warn",
 			{ argsIgnorePattern: "^_" },
 		],
+		"@typescript-eslint/no-misused-promises": [
+			"error",
+			{
+				checksVoidReturn: {
+					arguments: false,
+					attributes: false,
+				},
+			},
+		],
 	},
 };
 

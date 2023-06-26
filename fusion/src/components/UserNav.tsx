@@ -1,55 +1,78 @@
-import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@radix-ui/react-dropdown-menu";
 import { Button } from "./ui/button";
+import {
+	IconLayoutDashboard,
+	IconLogout,
+	IconUserEdit,
+} from "@tabler/icons-react";
+import { Link } from "react-router-dom";
 
 export const UserNav = () => {
-    return(
-	<DropdownMenu>
-		<DropdownMenuTrigger asChild>
-			<Button variant="ghost" className="relative h-8 w-8 rounded-full">
-				<Avatar className="h-9 w-9">
-					<AvatarImage src="/avatars/03.png" alt="@shadcn" />
-					<AvatarFallback>SC</AvatarFallback>
-				</Avatar>
-			</Button>
-		</DropdownMenuTrigger>
-		<DropdownMenuContent className="w-56" align="end" forceMount>
-			<DropdownMenuLabel className="font-normal">
-				<div className="flex flex-col space-y-1">
-					<p className="text-sm font-medium leading-none">shadcn</p>
-					<p className="text-xs leading-none text-muted-foreground">
-						m@example.com
-					</p>
-				</div>
-			</DropdownMenuLabel>
-			<DropdownMenuSeparator />
-			<DropdownMenuGroup>
-				<DropdownMenuItem>
-					<User className="mr-2 h-4 w-4" />
-					<span>Profile</span>
-					<DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-				</DropdownMenuItem>
-				<DropdownMenuItem>
-					<CreditCard className="mr-2 h-4 w-4" />
-					<span>Billing</span>
-					<DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-				</DropdownMenuItem>
-				<DropdownMenuItem>
-					<Settings className="mr-2 h-4 w-4" />
-					<span>Settings</span>
-					<DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-				</DropdownMenuItem>
-				<DropdownMenuItem>
-					<PlusCircle className="mr-2 h-4 w-4" />
-					<span>New Team</span>
-				</DropdownMenuItem>
-			</DropdownMenuGroup>
-			<DropdownMenuSeparator />
-			<DropdownMenuItem>
-				<LogOut className="mr-2 h-4 w-4" />
-				<span>Log out</span>
-				<DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-			</DropdownMenuItem>
-		</DropdownMenuContent>
-	</DropdownMenu>;
-    )
+	return (
+		<div className="relative m-1">
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<Button
+						variant="outline"
+						className="relative h-10 w-10 rounded-full p-0"
+					>
+						<Avatar className="grid h-10 w-10 place-items-center">
+							<AvatarImage
+								src="https://source.unsplash.com/200x200/?avatar"
+								className="rounded-full object-fill"
+								alt="@user"
+							></AvatarImage>
+							<AvatarFallback className="text-lg ">
+								DF
+							</AvatarFallback>
+						</Avatar>
+					</Button>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent
+					className="w-56 rounded-md border-2 border-solid border-zinc-200 p-1"
+					align="end"
+				>
+					<DropdownMenuLabel>@USERNAME</DropdownMenuLabel>
+					<DropdownMenuSeparator></DropdownMenuSeparator>
+					<DropdownMenuGroup>
+						<DropdownMenuItem>
+							<Link
+								to={"/user/id/dashboard"}
+								className="flex items-center"
+							>
+								<IconLayoutDashboard className="mr-2 h-4 w-4"></IconLayoutDashboard>{" "}
+								<span>Dashboard</span>
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuItem>
+							<Link
+								to={"/user/id/edit"}
+								className="flex items-center"
+							>
+								<IconUserEdit className="mr-2 h-4 w-4"></IconUserEdit>{" "}
+								<span>Edit Profile</span>
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuItem>
+							<Link to={"/logout"} className="flex items-center">
+								<IconLogout className="mr-2 h-4 w-4">
+									{" "}
+								</IconLogout>{" "}
+								<span>Log out</span>
+							</Link>
+						</DropdownMenuItem>
+					</DropdownMenuGroup>
+				</DropdownMenuContent>
+			</DropdownMenu>
+		</div>
+	);
 };

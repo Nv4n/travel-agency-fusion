@@ -6,9 +6,8 @@ import userRouter from "./routers/userRouter";
 const MODE = t3Env.NODE_ENV;
 
 const app = express();
-app.get("/api", (req, res) => {
-	res.json({ message: "It works!" });
-});
+app.use(express.json());
+
 // Use vite's connect instance as middleware
 app.use("/api/users", userRouter);
 
