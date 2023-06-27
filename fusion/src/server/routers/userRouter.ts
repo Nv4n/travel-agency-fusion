@@ -1,5 +1,5 @@
-import { schemaRegisterUser } from "@/model/formSchemas/SchemaUserAuthenticate";
-import { t3Env } from "@/t3Env";
+import { schemaRegisterUser } from "../../model/formSchemas/SchemaUserAuthenticate";
+import { t3Env } from "../../t3Env";
 import { type User } from "@prisma/client";
 import express, { Router, type Request, type Response } from "express";
 import jwt from "jsonwebtoken";
