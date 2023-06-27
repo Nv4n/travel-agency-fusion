@@ -29,9 +29,22 @@ model User {
     properties   Property[]
     messages     Message[]
     reviews      Review[]
-    Chat         Chat[]
+    chats        Chat[]
+    tokens       Token[]
 
     @@index([id])
+}
+
+model Token {
+    id          String   @id @unique @default(cuid())
+    hashedToken String
+    userId      String
+    user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    revoked     Boolean  @default(false)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    @@index([userId])
 }
 
 model Password {
