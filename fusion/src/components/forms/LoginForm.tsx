@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
 	Form,
 	FormControl,
@@ -7,26 +8,12 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { schemaLoginUser } from "@/model/formSchemas/SchemaUserAuthenticate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { type z } from "zod";
+import { hidePlaceholderStyles, peekLabelStyles } from "./formStyles";
 
-const schemaLoginUser = z.object({
-	email: z.string().email({ message: "Invalid email" }).nonempty(),
-	password: z.string().min(8).max(32).nonempty(),
-	fname: z
-		.string()
-		.min(2)
-		.max(50)
-		.regex(/^[A-Za-z]{2,50}$/, "Use only letters")
-		.nonempty(),
-	lname: z
-		.string()
-		.min(2)
-		.max(50)
-		.regex(/^[A-Za-z]{2,50}$/, "Use only letters")
-		.nonempty(),
-});
 type LoginUser = z.infer<typeof schemaLoginUser>;
 
 export type LoginFormProps = React.FormHTMLAttributes<HTMLFormElement>;
@@ -37,8 +24,6 @@ export const LoginForm = ({ className }: LoginFormProps) => {
 		defaultValues: {
 			email: "",
 			password: "",
-			fname: "",
-			lname: "",
 		},
 		mode: "onChange",
 	});
@@ -53,10 +38,13 @@ export const LoginForm = ({ className }: LoginFormProps) => {
 					control={form.control}
 					name="email"
 					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Email</FormLabel>
+						<FormItem className="group relative space-y-1">
+							<FormLabel className={peekLabelStyles}>
+								Email
+							</FormLabel>
 							<FormControl>
 								<Input
+									className={hidePlaceholderStyles}
 									placeholder="Email"
 									type="email"
 									{...field}
@@ -70,11 +58,14 @@ export const LoginForm = ({ className }: LoginFormProps) => {
 					control={form.control}
 					name="password"
 					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Email</FormLabel>
+						<FormItem className="group relative space-y-1">
+							<FormLabel className={peekLabelStyles}>
+								Password
+							</FormLabel>
 							<FormControl>
 								<Input
-									placeholder="Email"
+									className={hidePlaceholderStyles}
+									placeholder="Password"
 									type="password"
 									{...field}
 								/>
@@ -83,6 +74,7 @@ export const LoginForm = ({ className }: LoginFormProps) => {
 						</FormItem>
 					)}
 				/>
+				<Button type="submit">Login</Button>
 			</form>
 		</Form>
 	);

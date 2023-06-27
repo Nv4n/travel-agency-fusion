@@ -1,44 +1,30 @@
-import { z } from "zod";
+import { Button } from "@/components/ui/button";
 import {
 	Form,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { schemaRegisterUser } from "@/model/formSchemas/SchemaUserAuthenticate";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { type z } from "zod";
+import { hidePlaceholderStyles, peekLabelStyles } from "./formStyles";
 
-const schemaRegisterUser = z.object({
-	email: z.string().email({ message: "Invalid email" }).nonempty(),
-	password: z.string().min(8).max(32).nonempty(),
-	fname: z
-		.string()
-		.min(2)
-		.max(50)
-		.regex(/^[A-Za-z]{2,50}$/, "Use only letters")
-		.nonempty(),
-	lname: z
-		.string()
-		.min(2)
-		.max(50)
-		.regex(/^[A-Za-z]{2,50}$/, "Use only letters")
-		.nonempty(),
-});
 type RegisterUser = z.infer<typeof schemaRegisterUser>;
 
 export type RegisterFormProps = React.FormHTMLAttributes<HTMLFormElement>;
 
-export const LoginForm = ({ className }: RegisterFormProps) => {
+export const RegisterForm = ({ className }: RegisterFormProps) => {
 	const form = useForm<RegisterUser>({
 		resolver: zodResolver(schemaRegisterUser),
 		defaultValues: {
 			email: "",
 			password: "",
+			repassword: "",
 			fname: "",
 			lname: "",
 		},
@@ -55,10 +41,13 @@ export const LoginForm = ({ className }: RegisterFormProps) => {
 					control={form.control}
 					name="email"
 					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Email</FormLabel>
+						<FormItem className="group relative space-y-1">
+							<FormLabel className={peekLabelStyles}>
+								Email
+							</FormLabel>
 							<FormControl>
 								<Input
+									className={hidePlaceholderStyles}
 									placeholder="Email"
 									type="email"
 									{...field}
@@ -72,11 +61,34 @@ export const LoginForm = ({ className }: RegisterFormProps) => {
 					control={form.control}
 					name="password"
 					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Password</FormLabel>
+						<FormItem className="group relative space-y-1">
+							<FormLabel className={peekLabelStyles}>
+								Password
+							</FormLabel>
 							<FormControl>
 								<Input
-									placeholder="Email"
+									className={hidePlaceholderStyles}
+									placeholder="Password"
+									type="password"
+									{...field}
+								/>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				<FormField
+					control={form.control}
+					name="repassword"
+					render={({ field }) => (
+						<FormItem className="group relative space-y-1">
+							<FormLabel className={peekLabelStyles}>
+								Re-Password
+							</FormLabel>
+							<FormControl>
+								<Input
+									className={hidePlaceholderStyles}
+									placeholder="Re-Password"
 									type="password"
 									{...field}
 								/>
@@ -89,12 +101,16 @@ export const LoginForm = ({ className }: RegisterFormProps) => {
 					control={form.control}
 					name="fname"
 					render={({ field }) => (
-						<FormItem className="group relative">
-							<FormLabel className="sr-only absolute transition-all group-focus-within:not-sr-only">
+						<FormItem className="group relative space-y-1">
+							<FormLabel className={peekLabelStyles}>
 								First name
 							</FormLabel>
 							<FormControl>
-								<Input placeholder="First name" {...field} />
+								<Input
+									className={hidePlaceholderStyles}
+									placeholder="First name"
+									{...field}
+								/>
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -104,18 +120,22 @@ export const LoginForm = ({ className }: RegisterFormProps) => {
 					control={form.control}
 					name="lname"
 					render={({ field }) => (
-						<FormItem className="group relative">
-							<FormLabel className="sr-only absolute transition-all group-focus-within:not-sr-only">
+						<FormItem className="group relative space-y-1">
+							<FormLabel className={peekLabelStyles}>
 								Last name
 							</FormLabel>
 							<FormControl>
-								<Input placeholder="Last name" {...field} />
+								<Input
+									className={hidePlaceholderStyles}
+									placeholder="Last name"
+									{...field}
+								/>
 							</FormControl>
 							<FormMessage />
 						</FormItem>
 					)}
 				/>
-				<Button type="submit">Login</Button>
+				<Button type="submit">Register</Button>
 			</form>
 		</Form>
 	);

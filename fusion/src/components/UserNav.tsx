@@ -10,24 +10,39 @@ import {
 } from "@radix-ui/react-dropdown-menu";
 import { Button } from "./ui/button";
 import {
+	IconHome,
 	IconLayoutDashboard,
 	IconLogout,
 	IconUserEdit,
 } from "@tabler/icons-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useCookies } from "react-cookie";
 
 export const UserNav = () => {
 	const [cookies] = useCookies(["fusion-user"]);
+	const { pathname } = useLocation();
+
 	return !cookies["fusion-user"] ? (
-		<div className="flex gap-2">
-			<Button variant="outline" className="transition-all">
-				<Link to={"/login"}>LOGIN</Link>
-			</Button>
-			<Button variant="outline" className="transition-all">
-				<Link to={"/register"}>REGISTER</Link>
-			</Button>
-		</div>
+		pathname === "/login" || pathname === "/register" ? (
+			<div className="">
+				<>
+					<Button variant="outline" className="transition-all">
+						<Link to={"/"}>
+							<IconHome></IconHome>
+						</Link>
+					</Button>
+				</>
+			</div>
+		) : (
+			<div className="flex gap-2">
+				<Button variant="outline" className="transition-all">
+					<Link to={"/login"}>LOGIN</Link>
+				</Button>
+				<Button variant="outline" className="transition-all">
+					<Link to={"/register"}>REGISTER</Link>
+				</Button>
+			</div>
+		)
 	) : (
 		<div className="relative m-1">
 			<DropdownMenu>
