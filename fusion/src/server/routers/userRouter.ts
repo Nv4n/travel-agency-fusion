@@ -43,7 +43,7 @@ userRouter.get("/hello", (_req: Request, res: Response) => {
 
 // userRouter.post("/login", (req: Request, res: Response) => {});
 
-userRouter.post("/register", async (req: Request, res: Response) => {
+userRouter.post("/register", (req: Request, res: Response) => {
 	console.log(req.body);
 	const body = schemaRegisterUser.safeParse(req.body);
 	if (!body.success) {
@@ -52,9 +52,9 @@ userRouter.post("/register", async (req: Request, res: Response) => {
 	}
 	const data = body.data;
 	const hashedPassword = bcrypt.hashSync(data.password, 101);
-	const result = await prisma.user.create({});
-	if (result) {
-	}
+	// const result = await prisma.user.create({});
+	// if (result) {
+	// }
 });
 
 export default userRouter;
