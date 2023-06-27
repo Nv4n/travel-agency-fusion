@@ -26,21 +26,25 @@ export const UserNav = () => {
 		pathname === "/login" || pathname === "/register" ? (
 			<div className="">
 				<>
-					<Button variant="outline" className="transition-all">
-						<Link to={"/"}>
+					<Link to={"/"}>
+						<Button variant="outline" className="transition-all">
 							<IconHome></IconHome>
-						</Link>
-					</Button>
+						</Button>
+					</Link>
 				</>
 			</div>
 		) : (
 			<div className="flex gap-2">
-				<Button variant="outline" className="transition-all">
-					<Link to={"/login"}>LOGIN</Link>
-				</Button>
-				<Button variant="outline" className="transition-all">
-					<Link to={"/register"}>REGISTER</Link>
-				</Button>
+				<Link to={"/login"}>
+					<Button variant="outline" className="transition-all">
+						LOGIN
+					</Button>
+				</Link>
+				<Link to={"/register"}>
+					<Button variant="outline" className="transition-all">
+						REGISTER
+					</Button>
+				</Link>
 			</div>
 		)
 	) : (
