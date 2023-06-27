@@ -41,6 +41,7 @@ const config = {
 				},
 			},
 		],
+		"no-console": "warn",
 	},
 };
 

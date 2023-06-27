@@ -39,8 +39,6 @@
     "**/*.cjs",
     "**/*.mjs",
     "vite.config.ts",
-    "src/server/*",
-    "src/server/routers"
   ],
   "exclude": [
     "node_modules"

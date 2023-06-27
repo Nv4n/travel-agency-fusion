@@ -17,6 +17,13 @@ export const t3Env = createEnv({
 	 */
 
 	server: {
+		JWT_SECRET: z
+			.string()
+			.min(12)
+			.max(64)
+			.regex(
+				/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&_\.-])[A-Za-z\d$@$!%*?&_\.-]{12,64}$/
+			),
 		DATABASE_URL: z.string().url(),
 		DIRECT_URL: z.string().url(),
 		NODE_ENV: z.enum(["development", "test", "production"]),
@@ -35,10 +42,10 @@ export const t3Env = createEnv({
 	 * middlewares) or client-side so we need to destruct manually.
 	 */
 	runtimeEnv: {
+		JWT_SECRET: envProps.VITE_JWT_SECRET,
 		DATABASE_URL: envProps.VITE_DATABASE_URL,
 		DIRECT_URL: envProps.VITE_DIRECT_URL,
 		NODE_ENV: process.env.NODE_ENV,
-		// VITE_PUBLIC_CLIENTVAR: process.env.VITE_PUBLIC_CLIENTVAR,
 	},
 	// Called when the schema validation fails.
 	onValidationError: (error: ZodError) => {
