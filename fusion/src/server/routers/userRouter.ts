@@ -1,16 +1,16 @@
+import { type User } from "@prisma/client";
+import bcrypt from "bcrypt";
+import crypto from "crypto";
+import express, {
+	Router,
+	type NextFunction,
+	type Request,
+	type Response,
+} from "express";
+import jwt from "jsonwebtoken";
 import { schemaRegisterUser } from "../../model/formSchemas/SchemaUserAuthenticate";
 import { t3Env } from "../../t3Env";
-import { type User } from "@prisma/client";
-import express, { Router, type Request, type Response } from "express";
-import jwt from "jsonwebtoken";
 import { prisma } from "../db";
-import bcrypt from "bcrypt";
-
-function generateAccessToken(user: User) {
-	return jwt.sign({ userId: user.id }, t3Env.JWT_SECRET, {
-		expiresIn: "5m",
-	});
-}
 
 function generateRefreshToken(user: User, jti: string) {
 	return jwt.sign(
@@ -24,15 +24,8 @@ function generateRefreshToken(user: User, jti: string) {
 		}
 	);
 }
-
-function generateTokens(user: User, jti: string) {
-	const accessToken = generateAccessToken(user);
-	const refreshToken = generateRefreshToken(user, jti);
-
-	return {
-		accessToken,
-		refreshToken,
-	};
+function hashToken(token: string) {
+	return crypto.createHash("sha512").update(token).digest("hex");
 }
 
 const userRouter = Router();
@@ -43,18 +36,59 @@ userRouter.get("/hello", (_req: Request, res: Response) => {
 
 // userRouter.post("/login", (req: Request, res: Response) => {});
 
-userRouter.post("/register", (req: Request, res: Response) => {
-	console.log(req.body);
-	const body = schemaRegisterUser.safeParse(req.body);
-	if (!body.success) {
-		res.status(400).json({ message: "Invalid request format" });
-		return;
+userRouter.post(
+	"/register",
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			console.log(req.body);
+			const body = schemaRegisterUser.safeParse(req.body);
+			if (!body.success) {
+				res.status(400).json({
+					message: "You must provide valid data",
+				});
+				return;
+			}
+			const data = body.data;
+			const existEmail = await prisma.user.findUnique({
+				where: { email: data.email },
+				select: { email: true },
+			});
+			if (existEmail) {
+				res.status(400).json({ message: "Email is already in use" });
+				return;
+			}
+			const hashedPassword = await bcrypt.hash(data.password, 101);
+			const resultUser = await prisma.user.create({
+				data: {
+					email: data.email,
+					fname: data.fname,
+					lname: data.lname,
+					password: {
+						create: {
+							hash: hashedPassword,
+						},
+					},
+				},
+			});
+			const jti = crypto.randomUUID();
+			const token = generateRefreshToken(resultUser, jti);
+			const resultToken = await prisma.token.create({
+				data: {
+					id: jti,
+					hashedToken: hashToken(token),
+					user: {
+						connect: {
+							id: resultUser.id,
+						},
+					},
+				},
+			});
+
+			res.status(201).cookie("fusion-token", token,{maxAge: });
+		} catch (err) {
+			next(err);
+		}
 	}
-	const data = body.data;
-	const hashedPassword = bcrypt.hashSync(data.password, 101);
-	// const result = await prisma.user.create({});
-	// if (result) {
-	// }
-});
+);
 
 export default userRouter;
