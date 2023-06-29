@@ -4,8 +4,10 @@ import { Outlet } from "react-router-dom";
 
 export const Layout = () => {
 	const TestFunc = async () => {
-		const test = await fetch("/api/test");
+		const test = await fetch("/docs");
+		const body = test.json();
 		console.log(test);
+		console.log(body);
 	};
 	return (
 		<>
