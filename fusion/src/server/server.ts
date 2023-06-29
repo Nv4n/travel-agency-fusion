@@ -2,6 +2,7 @@ import express from "express";
 import path from "path";
 import { t3Env } from "../t3Env";
 import userRouter from "./routers/userRouter";
+import swaggerDocs from "./swagger";
 
 const MODE = t3Env.NODE_ENV;
 
@@ -17,5 +18,6 @@ if (MODE === "production") {
 	app.set("port", 6000);
 }
 
+swaggerDocs(app, 5173);
 
 export default app;

@@ -25,7 +25,7 @@ const options: swaggerJsdoc.Options = {
 			},
 		],
 	},
-	apis: ["./src/server/routers/server.ts", "./src/server/schema/*.ts"],
+	apis: ["./src/server/routers/*.ts", "./src/server/apiSchemas.yaml"],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
@@ -40,7 +40,7 @@ function swaggerDocs(app: Express, port: number) {
 		res.send(swaggerSpec);
 	});
 
-	console.log(`Docs available at http://localhost:${5173}/docs`);
+	console.log(`Docs available at http://localhost:${port}/docs`);
 }
 
 export default swaggerDocs;

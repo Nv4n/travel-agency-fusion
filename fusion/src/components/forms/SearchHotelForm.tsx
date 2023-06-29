@@ -17,6 +17,7 @@ import { addDays } from "date-fns";
 import { type SelectRangeEventHandler } from "react-day-picker";
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
+import { hidePlaceholderStyles, peekLabelStyles } from "./formStyles";
 
 export interface SearchHotelProps
 	extends React.FormHTMLAttributes<HTMLFormElement> {
@@ -67,12 +68,16 @@ export const SearchHotelForm = ({
 					control={form.control}
 					name="destination"
 					render={({ field }) => (
-						<FormItem>
-							<FormLabel className="sr-only">
+						<FormItem className="group relative">
+							<FormLabel className={peekLabelStyles}>
 								Destination
 							</FormLabel>
 							<FormControl>
-								<Input placeholder="Destination" {...field} />
+								<Input
+									className={hidePlaceholderStyles}
+									placeholder="Destination"
+									{...field}
+								/>
 							</FormControl>
 							<FormMessage />
 						</FormItem>

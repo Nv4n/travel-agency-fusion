@@ -1,14 +1,7 @@
 import { UserNav } from "@/components/UserNav";
-import { Button } from "@/components/ui/button";
 import { Outlet } from "react-router-dom";
 
 export const Layout = () => {
-	const TestFunc = async () => {
-		const test = await fetch("/docs");
-		const body = test.json();
-		console.log(test);
-		console.log(body);
-	};
 	return (
 		<>
 			<header>
@@ -16,11 +9,6 @@ export const Layout = () => {
 					<ul>
 						<li className="absolute right-0 top-0 p-4">
 							<UserNav></UserNav>
-						</li>
-						<li>
-							<Button onClick={() => TestFunc()}>
-								TEST BUTTON
-							</Button>
 						</li>
 					</ul>
 				</nav>

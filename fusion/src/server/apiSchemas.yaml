@@ -1,0 +1,84 @@
+
+ openapi: 3.0.0
+ /api/users/register:
+   post:
+     summary: Register a new user
+     produces:
+       - application/json
+     parameters:
+       - name: body
+         in: body
+         description: User registration data
+         required: true
+         schema:
+           type: object
+           properties:
+             email:
+               type: string
+             fname:
+               type: string
+             lname:
+               type: string
+             password:
+               type: string
+     responses:
+       '201':
+         description: User successfully registered
+       '400':
+         description: Invalid data format or email already in use
+       '500':
+         description: Internal server error
+ /api/users/login:
+   post:
+     summary: User login
+     description: Endpoint for user login
+     requestBody:
+       required: true
+       content:
+         application/json:
+           schema:
+             type: object
+             properties:
+               email:
+                 type: string
+               password:
+                 type: string
+     responses:
+       '200':
+         description: Successful login
+         content:
+           application/json:
+             schema:
+               type: object
+               properties:
+                 accessToken:
+                   type: string
+       '400':
+         description: Invalid data format
+         content:
+           application/json:
+             schema:
+               type: object
+               properties:
+                 error:
+                   type: string
+       '403':
+         description: Invalid login credentials
+         content:
+           application/json:
+             schema:
+               type: object
+               properties:
+                 error:
+                   type: string
+       '404':
+         description: User not found
+         content:
+           application/json:
+             schema:
+               type: object
+               properties:
+                 error:
+                   type: string
+       '500':
+         description: Internal server error

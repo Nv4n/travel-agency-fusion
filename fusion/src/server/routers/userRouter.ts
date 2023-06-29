@@ -41,6 +41,7 @@ function generateRefreshToken(user: Pick<User, "email" | "id">, jti: string) {
 const userRouter = Router();
 userRouter.use(express.json());
 
+
 userRouter.post("/register", async (req: Request, res: Response) => {
 	try {
 		console.log(req.body);
@@ -149,6 +150,7 @@ userRouter.post("/login", async (req, res) => {
 		}
 
 		const accessToken = generateAccessToken(foundUser);
+		res.status(200);
 	} catch (err) {
 		res.sendStatus(500);
 		console.log(err);
