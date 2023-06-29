@@ -33,16 +33,17 @@ model User {
     tokens       Token[]
 
     @@index([id])
+    @@index(fields: [fname,lname])
 }
 
 model Token {
-    id          String   @id @unique @default(cuid())
-    hashedToken String
-    userId      String
-    user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    revoked     Boolean  @default(false)
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+    id        String   @id @unique @default(cuid())
+    hash      String
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    valid     Boolean  @default(true)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     @@index([userId])
 }

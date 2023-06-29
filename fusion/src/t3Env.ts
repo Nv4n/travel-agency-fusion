@@ -17,7 +17,14 @@ export const t3Env = createEnv({
 	 */
 
 	server: {
-		JWT_SECRET: z
+		REFRESH_SECRET: z
+			.string()
+			.min(12)
+			.max(64)
+			.regex(
+				/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&_\.-])[A-Za-z\d$@$!%*?&_\.-]{12,64}$/
+			),
+		ACCESS_SECRET: z
 			.string()
 			.min(12)
 			.max(64)
@@ -42,7 +49,8 @@ export const t3Env = createEnv({
 	 * middlewares) or client-side so we need to destruct manually.
 	 */
 	runtimeEnv: {
-		JWT_SECRET: envProps.VITE_JWT_SECRET,
+		REFRESH_SECRET: envProps.VITE_REFRESH_SECRET,
+		ACCESS_SECRET: envProps.VITE_ACCESS_SECRET,
 		DATABASE_URL: envProps.VITE_DATABASE_URL,
 		DIRECT_URL: envProps.VITE_DIRECT_URL,
 		NODE_ENV: process.env.NODE_ENV,
