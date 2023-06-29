@@ -3,6 +3,8 @@
  /api/users/register:
    post:
      summary: Register a new user
+     tags:
+        - User
      produces:
        - application/json
      parameters:
@@ -28,9 +30,12 @@
          description: Invalid data format or email already in use
        '500':
          description: Internal server error
+
  /api/users/login:
    post:
      summary: User login
+     tags:
+        - User
      description: Endpoint for user login
      requestBody:
        required: true

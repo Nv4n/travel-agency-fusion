@@ -1,0 +1,73 @@
+
+  openapi: 3.0.0
+  /api/hotels/destinations/all:
+    get:
+      summary: Get all destinations
+      tags:
+        - Hotel
+      description: Retrieve a list of all destinations.
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  destinations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        destination:
+                          type: string
+                        _count:
+                          type: object
+                          properties:
+                            destination:
+                              type: boolean
+        404:
+          description: Destinations not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        500:
+          description: Internal server error
+
+  /api/hotels/destinations:
+    get:
+      summary: Retrieve filtered hotels based on search criteria.
+      tags:
+        - Hotel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchHotelRequestBody'
+      responses:
+        200:
+          description: Successful operation. Returns the filtered hotels.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilteredHotelsResponse'
+        400:
+          description: Invalid data format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: No hotels met the requirements.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error.
+ 
