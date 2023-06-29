@@ -2,7 +2,7 @@ import { type User } from "@prisma/client";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import { minutesToMilliseconds } from "date-fns";
-import express, { Router, type Request, type Response } from "express";
+import { Router, type Request, type Response } from "express";
 import jwt from "jsonwebtoken";
 import {
 	schemaLoginUser,
@@ -39,7 +39,6 @@ function generateRefreshToken(user: Pick<User, "email" | "id">, jti: string) {
 }
 
 const userRouter = Router();
-userRouter.use(express.json());
 
 
 userRouter.post("/register", async (req: Request, res: Response) => {

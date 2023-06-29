@@ -26,14 +26,14 @@ model User {
     updatedAt DateTime @updatedAt
 
     reservations Reservation[]
-    properties   Property[]
+    hotels       Hotel[]
     messages     Message[]
     reviews      Review[]
     chats        Chat[]
     tokens       Token[]
 
     @@index([id])
-    @@index(fields: [fname,lname])
+    @@index(fields: [fname, lname])
 }
 
 model Token {
@@ -87,16 +87,43 @@ model Review {
 
     createdAt DateTime @default(now())
 
-    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    propertyId String
-    user       User     @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
-    userId     String
+    hotel   Hotel  @relation(fields: [hotelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    hotelId String
+    user    User   @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+    userId  String
 
-    @@index([propertyId])
+    @@index([hotelId])
     @@index([userId])
 }
 
-//* Property/Hotel models
+// Hotel models
+model Hotel {
+    id          String @id @default(cuid())
+    description String
+    destination String
+
+    owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    ownerId     String
+    rooms       Room[]
+    reviews     Review[]
+
+    @@index([ownerId])
+}
+
+model Room {
+    id        String @id @unique @default(cuid())
+    quantity  Int
+    maxGuests Int    @map("max_guests")
+    price     Float
+
+    hotel        Hotel         @relation(fields: [hotelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    hotelId      String
+    reservations Reservation[]
+    facilities   Facility[]
+
+    @@index([hotelId])
+}
+
 model Reservation {
     id    String   @id @default(cuid())
     price Float
@@ -110,32 +137,6 @@ model Reservation {
 
     @@index([roomId])
     @@index([userId])
-}
-
-model Property {
-    id          String @id @default(cuid())
-    description String
-
-    owner   User     @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    ownerId String
-    rooms   Room[]
-    reviews Review[]
-
-    @@index([ownerId])
-}
-
-model Room {
-    id        String @id @unique @default(cuid())
-    quantity  Int
-    maxGuests Int    @map("max_guests")
-    price     Float
-
-    hotel        Property      @relation(fields: [hotelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    hotelId      String
-    reservations Reservation[]
-    facilities   Facility[]
-
-    @@index([hotelId])
 }
 
 model Facility {
