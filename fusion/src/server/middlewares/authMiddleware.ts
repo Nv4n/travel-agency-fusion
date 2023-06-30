@@ -1,31 +1,30 @@
 import { type NextFunction, type Request, type Response } from "express";
-import jwt from "jsonwebtoken";
-import { t3Env } from "../../t3Env";
 
-export function jwtVerifyToken(
+export const jwtAuthMiddleware = (
 	req: Request,
 	res: Response,
 	next: NextFunction
-) {
+) => {
 	const bearerHeader = req.headers.authorization;
-
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+	const authCookie = req.cookies["fusion-refresh-token"];
 	if (!bearerHeader) {
-		res.redirect(401,"/login");
+		res.redirect(307, "/login");
 		return;
 	}
 
-	const bearerToken = bearerHeader.split(" ")[1];
-	if (!bearerToken) {
-		res.redirect(401, "/login");
+	if (
+		!bearerHeader.match(
+			/Bearer [A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*/
+		)
+	) {
+		res.redirect(307, "/login");
 		return;
 	}
-	jwt.verify(bearerToken, t3Env.ACCESS_SECRET, (err, decoded) => {
-		if (err) {
-			res.redirect(401, "/login");
-			return;
-		} else {
-			console.log(decoded);
-			next();
-		}
-	});
-}
+
+	if (!authCookie) {
+		res.redirect(307, "/login");
+		return;
+	}
+	next();
+};

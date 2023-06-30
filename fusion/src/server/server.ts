@@ -1,14 +1,16 @@
 import express from "express";
 import path from "path";
 import { t3Env } from "../t3Env";
-import userRouter from "./routers/userRouter";
+import userRouter from "./routers/users/userRouter";
 import swaggerDocs from "./swagger";
-import hotelRouter from "./routers/hotelRouter";
+import hotelRouter from "./routers/hotels/hotelRouter";
+import cookieParser from "cookie-parser";
 
 const MODE = t3Env.NODE_ENV;
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/api/users", userRouter);
 app.use("/api/hotels", hotelRouter);

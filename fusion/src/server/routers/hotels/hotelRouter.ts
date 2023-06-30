@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { searchHotelSchema } from "../../model/formSchemas/SchemaSearchHotel";
-import { prisma } from "../db";
+import { searchHotelSchema } from "../../../model/formSchemas/SchemaSearchHotel";
+import { prisma } from "../../db";
+import { getAvailableHotels } from "./hotelRouterUtils";
 
 const hotelRouter = Router();
 
@@ -35,52 +36,7 @@ hotelRouter.get("/destinations", async (req, res) => {
 			return;
 		}
 		const data = body.data;
-		const hotels = await prisma.hotel.findMany({
-			select: {
-				description: true,
-				reviews: true,
-				rooms: {
-					where: {
-						maxGuests: { gte: data.people },
-						price: {
-							gte: data.priceRange.minPrice,
-							lte: data.priceRange.maxPrice,
-						},
-					},
-					select: {
-						id: true,
-						quantity: true,
-						price: true,
-						facilities: true,
-						reservations: {
-							where: {
-								OR: [
-									{
-										from: {
-											lt: data.dateRange.to,
-										},
-										to: {
-											gt: data.dateRange.from,
-										},
-									},
-									{
-										from: {
-											gte: data.dateRange.from,
-										},
-										to: {
-											lte: data.dateRange.to,
-										},
-									},
-								],
-							},
-							select: {
-								id: true,
-							},
-						},
-					},
-				},
-			},
-		});
+		const hotels = await getAvailableHotels(data);
 
 		const filteredHotels = hotels
 			.map((hotel) => {
@@ -101,4 +57,7 @@ hotelRouter.get("/destinations", async (req, res) => {
 		res.sendStatus(500);
 	}
 });
+
+// hotelRouter.post()
+
 export default hotelRouter;

@@ -99,13 +99,14 @@ model Review {
 // Hotel models
 model Hotel {
     id          String @id @default(cuid())
+    name        String
     description String
     destination String
 
-    owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    ownerId     String
-    rooms       Room[]
-    reviews     Review[]
+    owner   User     @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    ownerId String
+    rooms   Room[]
+    reviews Review[]
 
     @@index([ownerId])
 }

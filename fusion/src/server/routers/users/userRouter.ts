@@ -1,45 +1,19 @@
-import { type User } from "@prisma/client";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
-import { minutesToMilliseconds } from "date-fns";
+import { hoursToMilliseconds } from "date-fns";
 import { Router, type Request, type Response } from "express";
-import jwt from "jsonwebtoken";
 import {
 	schemaLoginUser,
 	schemaRegisterUser,
-} from "../../model/formSchemas/SchemaUserAuthenticate";
-import { t3Env } from "../../t3Env";
-import { prisma } from "../db";
-
-function generateAccessToken(user: Pick<User, "email" | "id">) {
-	return jwt.sign(
-		{
-			userId: user.id,
-			email: user.email,
-		},
-		t3Env.ACCESS_SECRET,
-		{
-			expiresIn: "15m",
-		}
-	);
-}
-
-function generateRefreshToken(user: Pick<User, "email" | "id">, jti: string) {
-	return jwt.sign(
-		{
-			userId: user.id,
-			email: user.email,
-			jwtId: jti,
-		},
-		t3Env.REFRESH_SECRET,
-		{
-			expiresIn: "3h",
-		}
-	);
-}
+} from "../../../model/formSchemas/SchemaUserAuthenticate";
+import { prisma } from "../../db";
+import {
+	generateAccessToken,
+	generateRefreshToken,
+	getVerifiedTokens,
+} from "./userRouterUtils";
 
 const userRouter = Router();
-
 
 userRouter.post("/register", async (req: Request, res: Response) => {
 	try {
@@ -88,11 +62,14 @@ userRouter.post("/register", async (req: Request, res: Response) => {
 			},
 		});
 
-		res.status(201).cookie("fusion-access-token", accessToken, {
-			maxAge: minutesToMilliseconds(15),
-			httpOnly: true,
-			secure: true,
-		});
+		res.status(201)
+			.cookie("fusion-refresh-token", refreshToken, {
+				maxAge: hoursToMilliseconds(3),
+				httpOnly: true,
+				secure: true,
+				sameSite: "strict",
+			})
+			.json({ accessToken });
 	} catch (err) {
 		res.sendStatus(500);
 		console.log(err);
@@ -149,7 +126,32 @@ userRouter.post("/login", async (req, res) => {
 		}
 
 		const accessToken = generateAccessToken(foundUser);
-		res.status(200);
+		const refreshToken = await prisma.token.findFirst({
+			where: {
+				userId: foundUser.id,
+			},
+			select: {
+				hash: true,
+				valid: true,
+			},
+		});
+
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+		const cookies = req.cookies["fusion-refresh-token"] as string;
+		const { accessToken: access, refreshToken: refresh } =
+			await getVerifiedTokens(
+				accessToken,
+				refreshToken?.hash || "",
+				foundUser
+			);
+		res.status(200)
+			.cookie("fusion-refresh-token", refresh, {
+				maxAge: hoursToMilliseconds(3),
+				httpOnly: true,
+				secure: true,
+				sameSite: "strict",
+			})
+			.json({ access });
 	} catch (err) {
 		res.sendStatus(500);
 		console.log(err);
