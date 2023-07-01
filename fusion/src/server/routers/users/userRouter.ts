@@ -65,7 +65,7 @@ userRouter.post("/register", async (req: Request, res: Response) => {
 		});
 
 		res.status(201)
-			.cookie(t3Env.JWT_COOKIE_NAME, refreshToken, {
+			.cookie(JWT_COOKIE_NAME, refreshToken, {
 				maxAge: hoursToMilliseconds(3),
 				httpOnly: true,
 				secure: true,
@@ -147,7 +147,7 @@ userRouter.post("/login", async (req, res) => {
 				foundUser
 			);
 		res.status(200)
-			.cookie(t3Env.JWT_COOKIE_NAME, refresh, {
+			.cookie(JWT_COOKIE_NAME, refresh, {
 				maxAge: hoursToMilliseconds(3),
 				httpOnly: true,
 				secure: true,

@@ -41,10 +41,7 @@ export const t3Env = createEnv({
 	 * Specify your client-side environment variables schema here. This way you can ensure the app
 	 * isn't built with invalid env vars. To expose them to the client, prefix them with
 	 */
-	client: {
-		VITE_JWT_COOKIE_NAME: z.string().nonempty(),
-		VITE_JWT_SESSION_NAME: z.string().nonempty(),
-	},
+	client: {},
 
 	/**
 	 * You can't destruct `process.env` as a regular object in the edge runtimes (e.g.
@@ -56,8 +53,6 @@ export const t3Env = createEnv({
 		DATABASE_URL: envProps.VITE_DATABASE_URL,
 		DIRECT_URL: envProps.VITE_DIRECT_URL,
 		JWT_COOKIE_NAME: envProps.VITE_JWT_COOKIE_NAME,
-		VITE_JWT_SESSION_NAME: envProps.VITE_JWT_SESSION_NAME,
-		VITE_JWT_COOKIE_NAME: envProps.VITE_JWT_COOKIE_NAME,
 		NODE_ENV: process.env.NODE_ENV,
 	},
 	// Called when the schema validation fails.

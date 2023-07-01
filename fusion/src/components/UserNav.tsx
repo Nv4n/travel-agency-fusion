@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -7,8 +7,8 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
-import { Button } from "./ui/button";
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import {
 	IconHome,
 	IconLayoutDashboard,
@@ -17,9 +17,11 @@ import {
 } from "@tabler/icons-react";
 import { Link, useLocation } from "react-router-dom";
 import { useCookies } from "react-cookie";
-import { t3Env } from "@/t3Env";
+import { UserNameContext } from "@/pages/Layout";
+import { useContext } from "react";
 
 export const UserNav = () => {
+	const [userName, _] = useContext(UserNameContext);
 	const [cookies] = useCookies(["fusion-refresh-token"]);
 	const { pathname } = useLocation();
 
@@ -30,11 +32,11 @@ export const UserNav = () => {
 			headers: {
 				"Content-Type": "application/json",
 				Authorization: `Bearer ${
-					sessionStorage.getItem(t3Env.VITE_JWT_SESSION_NAME) || ""
+					sessionStorage.getItem("fusion-access-token") || ""
 				}`,
 			},
 		});
-		sessionStorage.removeItem(t3Env.VITE_JWT_SESSION_NAME);
+		sessionStorage.removeItem("fusion-access-token");
 	};
 	return !cookies["fusion-refresh-token"] ? (
 		pathname === "/login" || pathname === "/register" ? (

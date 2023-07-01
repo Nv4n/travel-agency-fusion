@@ -1,6 +1,8 @@
 import { AuthenticateUser } from "@/pages/AuthenticateUser";
 import { Home } from "@/pages/Home";
 import { Layout } from "@/pages/Layout";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { minutesToMilliseconds } from "date-fns";
 import {
 	Navigate,
 	RouterProvider,
@@ -23,8 +25,20 @@ const router = createBrowserRouter([
 	{ path: "/api/*", element: <Navigate to={"/"}></Navigate> },
 ]);
 
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			staleTime: minutesToMilliseconds(5),
+		},
+	},
+});
+
 const App = () => {
-	return <RouterProvider router={router}></RouterProvider>;
+	return (
+		<QueryClientProvider client={queryClient}>
+			<RouterProvider router={router}></RouterProvider>;
+		</QueryClientProvider>
+	);
 };
 
 export default App;
