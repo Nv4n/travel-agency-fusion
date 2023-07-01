@@ -57,7 +57,7 @@ hotelRouter.get("/destinations", async (req, res) => {
 		res.sendStatus(500);
 	}
 });
-
-// hotelRouter.post()
+//TODO ADD HOTEL
+// hotelRouter.post("/", jwtAuthMiddleware, (req, res) => {});
 
 export default hotelRouter;

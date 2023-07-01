@@ -8,7 +8,7 @@ export const getAvailableHotels = async (
 	return prisma.hotel.findMany({
 		select: {
 			id: true,
-			name:true
+			name: true,
 			description: true,
 			reviews: {
 				select: {
@@ -25,9 +25,8 @@ export const getAvailableHotels = async (
 				},
 				select: {
 					id: true,
-					quantity: true,
 					price: true,
-					facilities: true,
+					quantity: true,
 					reservations: {
 						where: {
 							OR: [

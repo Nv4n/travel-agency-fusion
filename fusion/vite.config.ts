@@ -2,11 +2,9 @@ import react from "@vitejs/plugin-react";
 import { resolve } from "path";
 import {
 	defineConfig,
-	splitVendorChunkPlugin,
 	type PreviewServerForHook,
 	type ViteDevServer,
 } from "vite";
-import FullReload from "vite-plugin-full-reload";
 import app from "./src/server/server";
 import "./src/t3Env";
 
@@ -30,8 +28,6 @@ export default defineConfig({
 		expressPreviewServerPlugin("/", app),
 		expressDevServerPlugin("/", app),
 		react(),
-		FullReload(["src/**/*"], { delay: 2000 }),
-		splitVendorChunkPlugin(),
 	],
 	server: {
 		watch: {

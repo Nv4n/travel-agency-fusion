@@ -13,6 +13,7 @@ import {
 	getVerifiedTokens,
 } from "./userRouterUtils";
 
+const JWT_COOKIE_NAME = "fusion-refresh-token";
 const userRouter = Router();
 
 userRouter.post("/register", async (req: Request, res: Response) => {
@@ -63,13 +64,13 @@ userRouter.post("/register", async (req: Request, res: Response) => {
 		});
 
 		res.status(201)
-			.cookie("fusion-refresh-token", refreshToken, {
+			.cookie(JWT_COOKIE_NAME, refreshToken, {
 				maxAge: hoursToMilliseconds(3),
 				httpOnly: true,
 				secure: true,
 				sameSite: "strict",
 			})
-			.json({ accessToken });
+			.json({ data: accessToken });
 	} catch (err) {
 		res.sendStatus(500);
 		console.log(err);
@@ -137,7 +138,7 @@ userRouter.post("/login", async (req, res) => {
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-		const cookies = req.cookies["fusion-refresh-token"] as string;
+		const cookies = req.cookies[JWT_COOKIE_NAME] as string;
 		const { accessToken: access, refreshToken: refresh } =
 			await getVerifiedTokens(
 				accessToken,
@@ -145,13 +146,13 @@ userRouter.post("/login", async (req, res) => {
 				foundUser
 			);
 		res.status(200)
-			.cookie("fusion-refresh-token", refresh, {
+			.cookie(JWT_COOKIE_NAME, refresh, {
 				maxAge: hoursToMilliseconds(3),
 				httpOnly: true,
 				secure: true,
 				sameSite: "strict",
 			})
-			.json({ access });
+			.json({ data: access });
 	} catch (err) {
 		res.sendStatus(500);
 		console.log(err);

@@ -19,20 +19,31 @@ import { Link, useLocation } from "react-router-dom";
 import { useCookies } from "react-cookie";
 
 export const UserNav = () => {
-	const [cookies] = useCookies(["fusion-user"]);
+	const [cookies] = useCookies(["fusion-refresh-token"]);
 	const { pathname } = useLocation();
 
-	return !cookies["fusion-user"] ? (
+	const onLogOut = async () => {
+		//TODO send
+		const resp = await fetch("/api/users/logout", {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${
+					sessionStorage.getItem("fusion-access-token") || ""
+				}`,
+			},
+		});
+		sessionStorage.removeItem("fusion-access-token");
+	};
+	return !cookies['fusion-refresh-token'] ? (
 		pathname === "/login" || pathname === "/register" ? (
-			<div className="">
-				<>
-					<Link to={"/"}>
-						<Button variant="outline" className="transition-all">
-							<IconHome></IconHome>
-						</Button>
-					</Link>
-				</>
-			</div>
+			<>
+				<Link to={"/"}>
+					<Button variant="outline" className="transition-all">
+						<IconHome></IconHome>
+					</Button>
+				</Link>
+			</>
 		) : (
 			<div className="flex gap-2">
 				<Link to={"/login"}>
