@@ -28,7 +28,7 @@ export const Layout = () => {
 		<UserNameContext.Provider value={nameContext}>
 			<header>
 				<nav className="sticky right-0 top-0 ">
-					<div className="absolute right-0 top-0 flex justify-between p-4">
+					<div className="absolute right-0 top-0 flex gap-2 p-4 sm:left-auto sm:right-0">
 						<ThemeChanger></ThemeChanger>
 						<UserNav></UserNav>
 					</div>

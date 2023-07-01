@@ -14,11 +14,17 @@ import { useForm } from "react-hook-form";
 import { type z } from "zod";
 import { hidePlaceholderStyles, peekLabelStyles } from "./formStyles";
 
-type RegisterUser = z.infer<typeof schemaRegisterUser>;
+export type RegisterUser = z.infer<typeof schemaRegisterUser>;
 
-export type RegisterFormProps = React.FormHTMLAttributes<HTMLFormElement>;
+export interface RegisterFormProps
+	extends React.FormHTMLAttributes<HTMLFormElement> {
+	onRegisterSubmit: (values: RegisterUser) => Promise<void>;
+}
 
-export const RegisterForm = ({ className }: RegisterFormProps) => {
+export const RegisterForm = ({
+	onRegisterSubmit,
+	className,
+}: RegisterFormProps) => {
 	const form = useForm<RegisterUser>({
 		resolver: zodResolver(schemaRegisterUser),
 		defaultValues: {
@@ -31,12 +37,12 @@ export const RegisterForm = ({ className }: RegisterFormProps) => {
 		mode: "onChange",
 	});
 
-	const onSubmit = (values: RegisterUser) => {
-		console.log(values);
-	};
 	return (
 		<Form {...form}>
-			<form className={"space-y-8 " + (className ? className : "")}>
+			<form
+				onSubmit={form.handleSubmit(onRegisterSubmit)}
+				className={"space-y-8 " + (className ? className : "")}
+			>
 				<FormField
 					control={form.control}
 					name="email"

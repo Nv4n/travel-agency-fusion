@@ -14,11 +14,14 @@ import { useForm } from "react-hook-form";
 import { type z } from "zod";
 import { hidePlaceholderStyles, peekLabelStyles } from "./formStyles";
 
-type LoginUser = z.infer<typeof schemaLoginUser>;
+export type LoginUser = z.infer<typeof schemaLoginUser>;
 
-export type LoginFormProps = React.FormHTMLAttributes<HTMLFormElement>;
+export interface LoginFormProps
+	extends React.FormHTMLAttributes<HTMLFormElement> {
+	onLoginSubmit: (values: LoginUser) => Promise<void>;
+}
 
-export const LoginForm = ({ className }: LoginFormProps) => {
+export const LoginForm = ({ onLoginSubmit, className }: LoginFormProps) => {
 	const form = useForm<LoginUser>({
 		resolver: zodResolver(schemaLoginUser),
 		defaultValues: {
@@ -28,12 +31,12 @@ export const LoginForm = ({ className }: LoginFormProps) => {
 		mode: "onChange",
 	});
 
-	const onSubmit = (values: LoginUser) => {
-		console.log(values);
-	};
 	return (
 		<Form {...form}>
-			<form className={"space-y-8 " + (className ? className : "")}>
+			<form
+				onSubmit={form.handleSubmit(onLoginSubmit)}
+				className={"space-y-8 " + (className ? className : "")}
+			>
 				<FormField
 					control={form.control}
 					name="email"

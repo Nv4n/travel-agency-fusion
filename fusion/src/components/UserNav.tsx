@@ -38,6 +38,7 @@ export const UserNav = () => {
 		});
 		sessionStorage.removeItem("fusion-access-token");
 	};
+	
 	return !cookies["fusion-refresh-token"] ? (
 		pathname === "/login" || pathname === "/register" ? (
 			<>
