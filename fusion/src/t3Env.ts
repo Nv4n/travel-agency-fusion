@@ -33,6 +33,7 @@ export const t3Env = createEnv({
 			),
 		DATABASE_URL: z.string().url(),
 		DIRECT_URL: z.string().url(),
+		JWT_COOKIE_NAME: z.string().nonempty(),
 		NODE_ENV: z.enum(["development", "test", "production"]),
 	},
 
@@ -41,7 +42,8 @@ export const t3Env = createEnv({
 	 * isn't built with invalid env vars. To expose them to the client, prefix them with
 	 */
 	client: {
-		// VITE_PUBLIC_CLIENTVAR: z.string().min(1),
+		VITE_JWT_COOKIE_NAME: z.string().nonempty(),
+		VITE_JWT_SESSION_NAME: z.string().nonempty(),
 	},
 
 	/**
@@ -53,6 +55,9 @@ export const t3Env = createEnv({
 		ACCESS_SECRET: envProps.VITE_ACCESS_SECRET,
 		DATABASE_URL: envProps.VITE_DATABASE_URL,
 		DIRECT_URL: envProps.VITE_DIRECT_URL,
+		JWT_COOKIE_NAME: envProps.VITE_JWT_COOKIE_NAME,
+		VITE_JWT_SESSION_NAME: envProps.VITE_JWT_SESSION_NAME,
+		VITE_JWT_COOKIE_NAME: envProps.VITE_JWT_COOKIE_NAME,
 		NODE_ENV: process.env.NODE_ENV,
 	},
 	// Called when the schema validation fails.

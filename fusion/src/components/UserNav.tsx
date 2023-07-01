@@ -17,6 +17,7 @@ import {
 } from "@tabler/icons-react";
 import { Link, useLocation } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import { t3Env } from "@/t3Env";
 
 export const UserNav = () => {
 	const [cookies] = useCookies(["fusion-refresh-token"]);
@@ -29,13 +30,13 @@ export const UserNav = () => {
 			headers: {
 				"Content-Type": "application/json",
 				Authorization: `Bearer ${
-					sessionStorage.getItem("fusion-access-token") || ""
+					sessionStorage.getItem(t3Env.VITE_JWT_SESSION_NAME) || ""
 				}`,
 			},
 		});
-		sessionStorage.removeItem("fusion-access-token");
+		sessionStorage.removeItem(t3Env.VITE_JWT_SESSION_NAME);
 	};
-	return !cookies['fusion-refresh-token'] ? (
+	return !cookies["fusion-refresh-token"] ? (
 		pathname === "/login" || pathname === "/register" ? (
 			<>
 				<Link to={"/"}>
@@ -104,12 +105,15 @@ export const UserNav = () => {
 							</Link>
 						</DropdownMenuItem>
 						<DropdownMenuItem>
-							<Link to={"/logout"} className="flex items-center">
+							<Button
+								onClick={() => void onLogOut()}
+								className="flex items-center"
+							>
 								<IconLogout className="mr-2 h-4 w-4">
 									{" "}
 								</IconLogout>{" "}
 								<span>Log out</span>
-							</Link>
+							</Button>
 						</DropdownMenuItem>
 					</DropdownMenuGroup>
 				</DropdownMenuContent>

@@ -12,6 +12,7 @@ import {
 	generateRefreshToken,
 	getVerifiedTokens,
 } from "./userRouterUtils";
+import { t3Env } from "../../../t3Env";
 
 const JWT_COOKIE_NAME = "fusion-refresh-token";
 const userRouter = Router();
@@ -64,7 +65,7 @@ userRouter.post("/register", async (req: Request, res: Response) => {
 		});
 
 		res.status(201)
-			.cookie(JWT_COOKIE_NAME, refreshToken, {
+			.cookie(t3Env.JWT_COOKIE_NAME, refreshToken, {
 				maxAge: hoursToMilliseconds(3),
 				httpOnly: true,
 				secure: true,
@@ -138,7 +139,7 @@ userRouter.post("/login", async (req, res) => {
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-		const cookies = req.cookies[JWT_COOKIE_NAME] as string;
+		const cookies = req.cookies[t3Env.JWT_COOKIE_NAME] as string;
 		const { accessToken: access, refreshToken: refresh } =
 			await getVerifiedTokens(
 				accessToken,
@@ -146,7 +147,7 @@ userRouter.post("/login", async (req, res) => {
 				foundUser
 			);
 		res.status(200)
-			.cookie(JWT_COOKIE_NAME, refresh, {
+			.cookie(t3Env.JWT_COOKIE_NAME, refresh, {
 				maxAge: hoursToMilliseconds(3),
 				httpOnly: true,
 				secure: true,
