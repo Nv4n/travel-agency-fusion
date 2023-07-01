@@ -1,4 +1,6 @@
+import { VITE_JWT_SESSION_NAME } from "@/client/App";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -8,38 +10,38 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+import { UserNameContext } from "@/pages/Layout";
 import {
 	IconHome,
 	IconLayoutDashboard,
 	IconLogout,
 	IconUserEdit,
 } from "@tabler/icons-react";
-import { Link, useLocation } from "react-router-dom";
-import { useCookies } from "react-cookie";
-import { UserNameContext } from "@/pages/Layout";
 import { useContext } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export const UserNav = () => {
 	const [userName, _] = useContext(UserNameContext);
-	const [cookies] = useCookies(["fusion-refresh-token"]);
+	const accessToken = sessionStorage.getItem(VITE_JWT_SESSION_NAME);
 	const { pathname } = useLocation();
+	const navigate = useNavigate();
+	const alias = userName
+		.split(" ")
+		.map((name) => name.charAt(0).toUpperCase())
+		.join("");
 
 	const onLogOut = async () => {
-		//TODO send
-		const resp = await fetch("/api/users/logout", {
-			method: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${
-					sessionStorage.getItem("fusion-access-token") || ""
-				}`,
-			},
+		console.log("inside");
+		await fetch("/api/users/logout", {
+			method: "DELETE",
 		});
-		sessionStorage.removeItem("fusion-access-token");
+		console.log("after fetch");
+
+		sessionStorage.removeItem(VITE_JWT_SESSION_NAME);
+		navigate("/");
 	};
-	
-	return !cookies["fusion-refresh-token"] ? (
+
+	return !accessToken ? (
 		pathname === "/login" || pathname === "/register" ? (
 			<>
 				<Link to={"/"}>
@@ -71,13 +73,8 @@ export const UserNav = () => {
 						className="relative h-10 w-10 rounded-full p-0"
 					>
 						<Avatar className="grid h-10 w-10 place-items-center">
-							<AvatarImage
-								src="https://source.unsplash.com/200x200/?avatar"
-								className="rounded-full object-fill"
-								alt="@user"
-							></AvatarImage>
 							<AvatarFallback className="text-lg ">
-								DF
+								{alias}
 							</AvatarFallback>
 						</Avatar>
 					</Button>
@@ -86,7 +83,7 @@ export const UserNav = () => {
 					className="w-56 rounded-md border-2 border-solid border-zinc-200 p-1"
 					align="end"
 				>
-					<DropdownMenuLabel>@USERNAME</DropdownMenuLabel>
+					<DropdownMenuLabel>{userName}</DropdownMenuLabel>
 					<DropdownMenuSeparator></DropdownMenuSeparator>
 					<DropdownMenuGroup>
 						<DropdownMenuItem>

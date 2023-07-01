@@ -14,12 +14,10 @@ import {
 } from "./userRouterUtils";
 import { t3Env } from "../../../t3Env";
 
-const JWT_COOKIE_NAME = "fusion-refresh-token";
 const userRouter = Router();
 
 userRouter.post("/register", async (req: Request, res: Response) => {
 	try {
-		console.log(req.body);
 		const parsedBody = schemaRegisterUser.safeParse(req.body);
 		if (!parsedBody.success) {
 			res.status(400).json({
@@ -52,7 +50,7 @@ userRouter.post("/register", async (req: Request, res: Response) => {
 		const jti = crypto.randomUUID();
 		const accessToken = generateAccessToken(resultUser);
 		const refreshToken = generateRefreshToken(resultUser, jti);
-		const resultToken = await prisma.token.create({
+		await prisma.token.create({
 			data: {
 				id: jti,
 				hash: refreshToken,
@@ -65,22 +63,27 @@ userRouter.post("/register", async (req: Request, res: Response) => {
 		});
 
 		res.status(201)
-			.cookie(JWT_COOKIE_NAME, refreshToken, {
+			.cookie(t3Env.JWT_COOKIE_NAME, refreshToken, {
 				maxAge: hoursToMilliseconds(3),
 				httpOnly: true,
 				secure: true,
 				sameSite: "strict",
 			})
-			.json({ data: accessToken });
+			.json({
+				data: {
+					accessToken,
+					fname: resultUser.fname,
+					lname: resultUser.lname,
+				},
+			});
 	} catch (err) {
-		res.sendStatus(500);
+		res.status(500).json({ error: "Server error" });
 		console.log(err);
 	}
 });
 
 userRouter.post("/login", async (req, res) => {
 	try {
-		console.log(req.body);
 		const parsedBody = schemaLoginUser.safeParse(req.body);
 		if (!parsedBody.success) {
 			res.status(400).json({
@@ -96,6 +99,8 @@ userRouter.post("/login", async (req, res) => {
 			select: {
 				id: true,
 				email: true,
+				fname: true,
+				lname: true,
 				password: {
 					select: {
 						hash: true,
@@ -105,7 +110,7 @@ userRouter.post("/login", async (req, res) => {
 		});
 		if (!foundUser) {
 			res.status(403).json({
-				error: "Invalid login credentials.",
+				error: "Email or password are wrong",
 			});
 			return;
 		}
@@ -122,7 +127,7 @@ userRouter.post("/login", async (req, res) => {
 		);
 		if (!isPasswordValid) {
 			res.status(403).json({
-				error: "Invalid login credentials.",
+				error: "Email or password are wrong",
 			});
 			return;
 		}
@@ -138,8 +143,6 @@ userRouter.post("/login", async (req, res) => {
 			},
 		});
 
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-		const cookies = req.cookies[t3Env.JWT_COOKIE_NAME] as string;
 		const { accessToken: access, refreshToken: refresh } =
 			await getVerifiedTokens(
 				accessToken,
@@ -147,17 +150,27 @@ userRouter.post("/login", async (req, res) => {
 				foundUser
 			);
 		res.status(200)
-			.cookie(JWT_COOKIE_NAME, refresh, {
+			.cookie(t3Env.JWT_COOKIE_NAME, refresh, {
 				maxAge: hoursToMilliseconds(3),
 				httpOnly: true,
 				secure: true,
 				sameSite: "strict",
 			})
-			.json({ data: access });
+			.json({
+				data: {
+					accessToken: access,
+					fname: foundUser.fname,
+					lname: foundUser.lname,
+				},
+			});
 	} catch (err) {
-		res.sendStatus(500);
+		res.status(500).json({ error: "Server error" });
 		console.log(err);
 	}
+});
+
+userRouter.delete("/logout", (req, res) => {
+	res.clearCookie(t3Env.JWT_COOKIE_NAME).sendStatus(200);
 });
 
 export default userRouter;

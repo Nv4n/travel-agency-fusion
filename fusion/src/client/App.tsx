@@ -9,6 +9,8 @@ import {
 	createBrowserRouter,
 } from "react-router-dom";
 
+export const VITE_JWT_SESSION_NAME = "fusion-access-token";
+
 const router = createBrowserRouter([
 	{
 		path: "/*",
