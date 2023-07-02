@@ -24,7 +24,7 @@ export type LoginUser = z.infer<typeof schemaLoginUser>;
 export type LoginFormProps = React.FormHTMLAttributes<HTMLFormElement>;
 
 export const LoginForm = ({ className }: LoginFormProps) => {
-	const [errorMsg, setErrorMsg] = useState("");
+const [errorMsg, setErrorMsg] = useState("");
 	const [_, setUserName] = useContext(UserNameContext);
 	const navigate = useNavigate();
 	const form = useForm<LoginUser>({

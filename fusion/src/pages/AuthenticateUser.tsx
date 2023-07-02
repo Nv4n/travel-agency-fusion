@@ -1,18 +1,10 @@
-import { VITE_JWT_SESSION_NAME } from "@/client/App";
 import { LoginForm } from "@/components/forms/LoginForm";
 import { RegisterForm } from "@/components/forms/RegisterForm";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export const AuthenticateUser = () => {
-	const accessToken = sessionStorage.getItem(VITE_JWT_SESSION_NAME);
-
-	const canGoHere = accessToken;
-	const navigate = useNavigate();
-	if (!canGoHere) {
-		navigate("/");
-	}
 	const location = useLocation();
 
 	return (

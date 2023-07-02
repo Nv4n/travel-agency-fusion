@@ -1,4 +1,8 @@
+import { RouteGuardWithAuth } from "@/components/RouteGuardWithAuth";
+import { RouteGuardWithoutAuth } from "@/components/RouteGuardWithoutAuth copy";
+import { CreateHotelForm } from "@/components/forms/CreateHotelForm";
 import { AuthenticateUser } from "@/pages/AuthenticateUser";
+import { CreateHotel } from "@/pages/CreateHotel";
 import { Home } from "@/pages/Home";
 import { Layout } from "@/pages/Layout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -17,11 +21,34 @@ const router = createBrowserRouter([
 		element: <Layout></Layout>,
 		children: [
 			{ path: "/*", element: <Home></Home> },
-			{ path: "login", element: <AuthenticateUser></AuthenticateUser> },
+			{
+				path: "login",
+				element: (
+					<RouteGuardWithoutAuth>
+						<AuthenticateUser></AuthenticateUser>
+					</RouteGuardWithoutAuth>
+				),
+			},
 			{
 				path: "register",
-				element: <AuthenticateUser></AuthenticateUser>,
+				element: (
+					<RouteGuardWithoutAuth>
+						<AuthenticateUser></AuthenticateUser>
+					</RouteGuardWithoutAuth>
+				),
 			},
+			{
+				path: "addHotel",
+				element: <CreateHotel></CreateHotel>,
+			},
+			// {
+			// 	path: "hotels/:hotelId/edit",
+			// 	element: (
+			// 		<RouteGuardWithAuth>
+			// 			<HotelForm></HotelForm>
+			// 		</RouteGuardWithAuth>
+			// 	),
+			// },
 		],
 	},
 	{ path: "/api/*", element: <Navigate to={"/"}></Navigate> },
@@ -39,6 +66,7 @@ const App = () => {
 	return (
 		<QueryClientProvider client={queryClient}>
 			<RouterProvider router={router}></RouterProvider>
+			
 		</QueryClientProvider>
 	);
 };

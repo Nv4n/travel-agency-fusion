@@ -13,6 +13,7 @@ import {
 import { UserNameContext } from "@/pages/Layout";
 import {
 	IconHome,
+	IconHomePlus,
 	IconLayoutDashboard,
 	IconLogout,
 	IconUserEdit,
@@ -102,6 +103,15 @@ export const UserNav = () => {
 							>
 								<IconUserEdit className="mr-2 h-4 w-4"></IconUserEdit>{" "}
 								<span>Edit Profile</span>
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuItem>
+							<Link
+								to={"/addHotel"}
+								className="flex items-center"
+							>
+								<IconHomePlus className="mr-2 h-4 w-4"></IconHomePlus>{" "}
+								<span>Add Hotel</span>
 							</Link>
 						</DropdownMenuItem>
 						<DropdownMenuItem>

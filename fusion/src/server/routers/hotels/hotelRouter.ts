@@ -2,6 +2,7 @@ import { Router } from "express";
 import { searchHotelSchema } from "../../../model/formSchemas/SchemaSearchHotel";
 import { prisma } from "../../db";
 import { getAvailableHotels } from "./hotelRouterUtils";
+import { jwtAuthMiddleware } from "../../../server/middlewares/authMiddleware";
 
 const hotelRouter = Router();
 
@@ -21,9 +22,9 @@ hotelRouter.get("/destinations/all", async (req, res) => {
 			res.status(404).json({ error: "Destinations not found" });
 			return;
 		}
-		res.status(200).json({ destinations });
+		res.status(200).json({ data: destinations });
 	} catch (err) {
-		res.sendStatus(500);
+		res.status(500).json({ error: "Internal server error" });
 	}
 });
 
@@ -52,12 +53,12 @@ hotelRouter.get("/destinations", async (req, res) => {
 			res.status(404).json({ error: "No hotels met the requirements" });
 			return;
 		}
-		res.status(200).json({ filteredHotels });
+		res.status(200).json({ data: filteredHotels });
 	} catch (err) {
-		res.sendStatus(500);
+		res.status(500).json({ error: "Internal server error" });
 	}
 });
 //TODO ADD HOTEL
-// hotelRouter.post("/", jwtAuthMiddleware, (req, res) => {});
+hotelRouter.post("/", jwtAuthMiddleware, (req, res) => {});
 
 export default hotelRouter;
