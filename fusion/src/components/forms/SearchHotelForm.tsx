@@ -18,6 +18,11 @@ import { type SelectRangeEventHandler } from "react-day-picker";
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
 import { hidePlaceholderStyles, peekLabelStyles } from "./formStyles";
+import { useState } from "react";
+import Fuse from "fuse.js";
+import { useQuery } from "@tanstack/react-query";
+import { ScrollArea } from "../ui/scroll-area";
+import { Separator } from "../ui/separator";
 
 export interface SearchHotelProps
 	extends React.FormHTMLAttributes<HTMLFormElement> {
@@ -30,6 +35,26 @@ export const SearchHotelForm = ({
 	minPrice,
 	maxPrice,
 }: SearchHotelProps) => {
+	const { data: possibleDestinations, isLoading } = useQuery({
+		queryKey: ["possible-destinations"],
+		queryFn: async () => {
+			const resp = await fetch("/api/hotels/destinations/all");
+			if (resp.status === 200) {
+				return [""];
+			}
+			return [""];
+		},
+	});
+	const index = new Fuse(isLoading ? [] : possibleDestinations || [], {});
+
+	const [cities, setCities] = useState<string[]>([]);
+
+	const onSearch = (query: string) => {
+		const results = index.search(query);
+		const cityNames = results.map((res) => res.item);
+		setCities(cityNames);
+	};
+
 	const schema = GetSchemaSearchHotel(minPrice, maxPrice);
 	type SearchHotel = z.infer<typeof schema>;
 	const form = useForm<SearchHotel>({
@@ -75,6 +100,9 @@ export const SearchHotelForm = ({
 							<FormControl>
 								<>
 									<Input
+										onInput={(e) =>
+											onSearch(e.currentTarget.value)
+										}
 										className={hidePlaceholderStyles}
 										placeholder="Destination"
 										{...field}
@@ -96,7 +124,7 @@ export const SearchHotelForm = ({
 															city
 														);
 														form.clearErrors(
-															"description"
+															"destination"
 														);
 													}}
 												>

@@ -12,7 +12,7 @@ import { schemaHotel } from "@/model/formSchemas/SchemasHotel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { City } from "country-state-city";
 import Fuse from "fuse.js";
-import { createRef, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { type z } from "zod";
@@ -165,7 +165,7 @@ export const CreateHotelForm = ({ className }: HotelFormProps) => {
 																city
 															);
 															form.clearErrors(
-																"description"
+																"destination"
 															);
 														}}
 													>

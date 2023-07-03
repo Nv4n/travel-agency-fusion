@@ -57,3 +57,4 @@ export const getAvailableHotels = async (
 		},
 	});
 };
+export const getAvailableRoomsInHotel = null;

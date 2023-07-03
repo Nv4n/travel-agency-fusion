@@ -1,10 +1,10 @@
-import { RouteGuardWithAuth } from "@/components/guards/RouteGuardWithAuth";
-import { RouteGuardWithoutAuth } from "@/components/RouteGuardWithoutAuth copy";
-import { CreateHotelForm } from "@/components/forms/CreateHotelForm";
+import { RouteGuardWithoutAuth } from "@/components/guards/RouteGuardWithoutAuth";
 import { AuthenticateUser } from "@/pages/AuthenticateUser";
 import { CreateHotel } from "@/pages/CreateHotel";
 import { Home } from "@/pages/Home";
+import { HotelDetails } from "@/pages/HotelDetails";
 import { Layout } from "@/pages/Layout";
+import { NotFound } from "@/pages/NotFound";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { minutesToMilliseconds } from "date-fns";
 import {
@@ -40,6 +40,14 @@ const router = createBrowserRouter([
 			{
 				path: "addHotel",
 				element: <CreateHotel></CreateHotel>,
+			},
+			{
+				path: "/hotels/:hotelId",
+				element: <HotelDetails></HotelDetails>,
+			},
+			{
+				path: "/404",
+				element: <NotFound></NotFound>,
 			},
 			// {
 			// 	path: "hotels/:hotelId/edit",

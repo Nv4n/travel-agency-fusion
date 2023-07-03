@@ -1,18 +1,13 @@
-import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { Router } from "express";
+import jwt from "jsonwebtoken";
 import { searchHotelSchema } from "../../../model/formSchemas/SchemaSearchHotel";
+import { schemaHotel } from "../../../model/formSchemas/SchemasHotel";
 import { jwtAuthMiddleware } from "../../../server/middlewares/authMiddleware";
 import { t3Env } from "../../../t3Env";
 import { prisma } from "../../db";
 import { getAvailableHotels } from "./hotelRouterUtils";
-import { schemaHotel } from "@/model/formSchemas/SchemasHotel";
-import jwt from "jsonwebtoken";
 
 const hotelRouter = Router();
-
-const supabase = createSupabaseClient(t3Env.SUPABASE_URL, t3Env.SUPABASE_ANON, {
-	auth: { persistSession: false },
-});
 
 hotelRouter.get("/destinations/all", async (req, res) => {
 	try {
@@ -25,12 +20,13 @@ hotelRouter.get("/destinations/all", async (req, res) => {
 				destination: "asc",
 			},
 		});
+		console.log(destinations);
 
 		if (!destinations) {
 			res.status(404).json({ error: "Destinations not found" });
 			return;
 		}
-		res.status(200).json({ data: destinations });
+		res.status(200).json({ data: { destinations: destinations } });
 	} catch (err) {
 		res.status(500).json({ error: "Internal server error" });
 	}
@@ -110,6 +106,100 @@ hotelRouter.post("/", jwtAuthMiddleware, async (req, res) => {
 		});
 
 		res.status(201).json({ data: { hotelId: createdHotel.id } });
+	} catch (err) {
+		console.log(err);
+		res.status(500).json({ error: "Internal server error" });
+	}
+});
+
+hotelRouter.get("/:hotelId", async (req, res) => {
+	try {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+		const authCookie = req.cookies[t3Env.JWT_COOKIE_NAME] as
+			| string
+			| undefined;
+		let userId = "";
+		if (authCookie) {
+			try {
+				const decoded = jwt.verify(
+					authCookie,
+					t3Env.REFRESH_SECRET
+				) as {
+					userId?: string;
+					email?: string;
+					jwtId?: string;
+				};
+				if (decoded.email && decoded.userId && !decoded.jwtId) {
+					const dbToken = await prisma.token.findFirst({
+						where: {
+							id: decoded.jwtId,
+							userId: decoded.userId,
+							valid: true,
+						},
+						select: {
+							hash: true,
+						},
+					});
+					if (dbToken) {
+						userId = decoded.userId;
+					}
+				}
+			} catch (err) {}
+		}
+
+		const { hotelId } = req.params;
+		const foundHotel = await prisma.hotel.findUnique({
+			where: {
+				id: hotelId,
+			},
+			select: {
+				id: true,
+				name: true,
+				description: true,
+				destination: true,
+				ownerId: true,
+				rooms: {
+					select: {
+						id: true,
+						quantity: true,
+						maxGuests: true,
+						price: true,
+					},
+				},
+				reviews: {
+					select: {
+						id: true,
+						rating: true,
+						content: true,
+						user: {
+							select: {
+								fname: true,
+								lname: true,
+							},
+						},
+					},
+				},
+			},
+		});
+		if (!foundHotel) {
+			res.status(404).json({ error: "Hotel not found" });
+			return;
+		}
+		const hotelData = {
+			id: foundHotel.id,
+			name: foundHotel.name,
+			description: foundHotel.description,
+			destination: foundHotel.destination,
+		};
+		const isOwner = foundHotel.ownerId === userId;
+		res.status(200).json({
+			data: {
+				hotel: hotelData,
+				rooms: foundHotel.rooms,
+				reviews: foundHotel.reviews,
+				isOwner: isOwner,
+			},
+		});
 	} catch (err) {
 		console.log(err);
 		res.status(500).json({ error: "Internal server error" });

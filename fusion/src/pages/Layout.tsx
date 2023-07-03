@@ -1,5 +1,5 @@
 import { HomeButton } from "@/components/buttons/HomeButton";
-import { ThemeChanger } from "@/components/ThemeChanger";
+import { ThemeChanger } from "@/components/buttons/ThemeChanger";
 import { UserNav } from "@/components/UserNav";
 import { createContext, useState } from "react";
 import { Outlet } from "react-router-dom";
