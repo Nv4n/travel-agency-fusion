@@ -13,8 +13,6 @@ export const jwtAuthMiddleware = (
 	const bearerHeader = req.headers.authorization;
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
 	const authCookie = req.cookies[JWT_COOKIE_NAME] as string | undefined;
-	// console.log(bearerHeader);
-	// console.log(authCookie);
 
 	if (!bearerHeader) {
 		res.status(401).json({ redirect: "/login" });

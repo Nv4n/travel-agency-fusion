@@ -49,34 +49,36 @@ export const CreateHotelForm = ({ className }: HotelFormProps) => {
 	});
 
 	const onCreateSubmit = async (values: Hotel) => {
-		const formData = new FormData();
-		formData.append("hotelImage", (values.hotelImage as string) || "");
-		formData.append("name", values.name);
-		formData.append("destination", values.destination);
-		formData.append("description", values.description);
-		console.log(formData.get("hotelImage"));
-
 		const accessToken = sessionStorage.getItem(VITE_JWT_SESSION_NAME);
-		const resp = await fetch(`/api/hotels/add`, {
+		const resp = await fetch(`/api/hotels/`, {
 			method: "POST",
 			headers: {
 				Authorization: `Bearer ${accessToken || ""}`,
 			},
-			body: formData,
+			body: JSON.stringify(values),
 		});
-		console.log(resp);
-		// if (resp.status >= 300) {
-		// 	const { error } = (await resp.json()) as { error: string };
-		// 	setErrorMsg(error);
-		// 	return;
-		// }
+		if (resp.status === 401) {
+			const { redirect, needRefresh } = (await resp.json()) as {
+				redirect?: string;
+				needRefresh?: string;
+			};
+			if (redirect) {
+				navigate(redirect);
+			}
+			if (needRefresh) {
+			}
+		}
+		if (resp.status >= 300) {
+			const { error } = (await resp.json()) as { error: string };
+			setErrorMsg(error);
+			return;
+		}
 
-		// const { data } = (await resp.json()) as {
-		// 	data: { accessToken: string; fname: string; lname: string };
-		// };
-		// sessionStorage.setItem(VITE_JWT_SESSION_NAME, data.accessToken);
-		// // setUserName(`${data.fname} ${data.lname}`);
-		// navigate("/");
+		const { data } = (await resp.json()) as {
+			data: { hotelId: string };
+		};
+
+		navigate(`/hotels/${data.hotelId}`);
 	};
 
 	const onSearch = (query: string) => {
@@ -85,25 +87,12 @@ export const CreateHotelForm = ({ className }: HotelFormProps) => {
 		setCities(cityNames);
 	};
 
-	const onFileChoosen = (file: File | null | undefined) => {
-		const fileReader = new FileReader();
-		fileReader.onloadend = (e) => {
-			const content = fileReader.result;
-			console.log(content);
-			form.setValue("hotelImage", content);
-		};
-		if (file) {
-			fileReader.readAsDataURL(file);
-		}
-	};
-
 	return (
 		<>
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onCreateSubmit)}
 					className={"space-y-8 " + (className ? className : "")}
-					encType="multipart/form-data"
 				>
 					<FormField
 						control={form.control}
@@ -159,6 +148,9 @@ export const CreateHotelForm = ({ className }: HotelFormProps) => {
 															form.setValue(
 																"destination",
 																city
+															);
+															form.clearErrors(
+																"description"
 															);
 														}}
 													>

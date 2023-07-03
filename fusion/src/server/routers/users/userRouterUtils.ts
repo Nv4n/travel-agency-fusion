@@ -1,8 +1,7 @@
-import { hoursToMilliseconds, minutesToMilliseconds } from "date-fns";
-import { prisma } from "../../../server/db";
-import { t3Env } from "../../../t3Env";
 import { type User } from "@prisma/client";
 import jwt from "jsonwebtoken";
+import { prisma } from "../../../server/db";
+import { t3Env } from "../../../t3Env";
 
 export const generateAccessToken = (user: Pick<User, "email" | "id">) => {
 	return jwt.sign(

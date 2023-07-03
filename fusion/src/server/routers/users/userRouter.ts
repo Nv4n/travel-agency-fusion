@@ -13,6 +13,8 @@ import {
 	getVerifiedTokens,
 } from "./userRouterUtils";
 import { t3Env } from "../../../t3Env";
+import { jwtAuthMiddleware } from "../../../server/middlewares/authMiddleware";
+import jwt from "jsonwebtoken";
 
 const userRouter = Router();
 
@@ -132,11 +134,8 @@ userRouter.post("/login", async (req, res) => {
 			return;
 		}
 
-
 		const { accessToken: access, refreshToken: refresh } =
-			await getVerifiedTokens(
-				foundUser
-			);
+			await getVerifiedTokens(foundUser);
 		res.status(200)
 			.cookie(t3Env.JWT_COOKIE_NAME, refresh, {
 				maxAge: Date.now() + hoursToMilliseconds(3),
@@ -158,5 +157,47 @@ userRouter.post("/login", async (req, res) => {
 userRouter.delete("/logout", (req, res) => {
 	res.clearCookie(t3Env.JWT_COOKIE_NAME).sendStatus(200);
 });
+
+userRouter.get("/name", jwtAuthMiddleware, async (req, res) => {
+	try {
+		const accessToken = req.headers["authorization"]?.replace(
+			"Bearer ",
+			""
+		);
+		if (!accessToken) {
+			res.status(403).json({ error: "Not authorized" });
+			return;
+		}
+		const decoded = jwt.decode(accessToken) as {
+			userId?: string;
+			email?: string;
+		};
+		console.log(decoded);
+		if (!decoded.userId && !decoded.email) {
+			res.status(400).json({ error: "Bad Access token" });
+			return;
+		}
+		const user = await prisma.user.findUnique({
+			where: {
+				email: decoded.email,
+			},
+			select: {
+				fname: true,
+				lname: true,
+			},
+		});
+
+		if (!user) {
+			res.status(404).json({ error: "User not found" });
+			return;
+		}
+		res.status(200).json({ data: { name: `${user.fname} ${user.lname}` } });
+	} catch (err) {
+		console.log(err);
+	}
+});
+
+
+userRouter.get('/refresh-token')
 
 export default userRouter;

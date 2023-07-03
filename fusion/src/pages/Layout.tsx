@@ -1,3 +1,4 @@
+import { HomeButton } from "@/components/HomeButton";
 import { ThemeChanger } from "@/components/ThemeChanger";
 import { UserNav } from "@/components/UserNav";
 import { createContext, useState } from "react";
@@ -30,6 +31,8 @@ export const Layout = () => {
 				<nav className="sticky right-0 top-0 ">
 					<div className="absolute right-0 top-0 flex gap-2 p-4 sm:left-auto sm:right-0">
 						<ThemeChanger></ThemeChanger>
+						<HomeButton></HomeButton>
+
 						<UserNav></UserNav>
 					</div>
 				</nav>

@@ -87,3 +87,12 @@
                    type: string
        '500':
          description: Internal server error
+ /api/users/logout:
+    delete:
+     summary: Logout the user
+     description: Logout the user and clear the JWT cookie.
+     tags:
+       - User
+     responses:
+       '200':
+          description: OK

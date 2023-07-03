@@ -1,42 +1,16 @@
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { Router } from "express";
 import { searchHotelSchema } from "../../../model/formSchemas/SchemaSearchHotel";
+import { jwtAuthMiddleware } from "../../../server/middlewares/authMiddleware";
+import { t3Env } from "../../../t3Env";
 import { prisma } from "../../db";
 import { getAvailableHotels } from "./hotelRouterUtils";
-import { jwtAuthMiddleware } from "../../../server/middlewares/authMiddleware";
-import multer from "multer";
-import { createClient as createSupabaseClient } from "@supabase/supabase-js";
-import { t3Env } from "../../../t3Env";
+import { schemaHotel } from "@/model/formSchemas/SchemasHotel";
+import jwt from "jsonwebtoken";
 
 const hotelRouter = Router();
-const storage = multer.diskStorage({
-	destination: (req, file, cb) => {
-		cb(null, "./public/");
-	},
-	filename: (req, file, cb) => {
-		const fileName = file.originalname.toLowerCase().split(" ").join("-");
-		cb(null, crypto.randomUUID() + "-" + fileName);
-	},
-});
-const upload = multer({
-	storage: storage,
-	fileFilter: (req, file, cb) => {
-		if (
-			file.mimetype === "image/png" ||
-			file.mimetype === "image/jpg" ||
-			file.mimetype === "image/jpeg" ||
-			file.mimetype === "image/webp"
-		) {
-			cb(null, true);
-		} else {
-			cb(null, false);
-			return cb(
-				new Error("Only .png, .jpg, .jpeg and .webp format allowed!")
-			);
-		}
-	},
-});
 
-const subabase = createSupabaseClient(t3Env.SUPABASE_URL, t3Env.SUPABASE_ANON, {
+const supabase = createSupabaseClient(t3Env.SUPABASE_URL, t3Env.SUPABASE_ANON, {
 	auth: { persistSession: false },
 });
 
@@ -66,7 +40,6 @@ hotelRouter.get("/destinations", async (req, res) => {
 	try {
 		const body = searchHotelSchema.safeParse(req.body);
 		if (!body.success) {
-			console.log(body.error);
 			res.status(400).json({ error: "Invalid data format" });
 			return;
 		}
@@ -87,25 +60,60 @@ hotelRouter.get("/destinations", async (req, res) => {
 			res.status(404).json({ error: "No hotels met the requirements" });
 			return;
 		}
-		res.status(200).json({ data: filteredHotels });
+		const destinations = new Set<string>();
+		filteredHotels.forEach((hotel) => {
+			if (hotel) {
+				destinations.add(hotel?.description);
+			}
+		});
+		res.status(200).json({ data: Array.from(destinations) });
 	} catch (err) {
 		res.status(500).json({ error: "Internal server error" });
 	}
 });
 //TODO ADD HOTEL
-hotelRouter.post(
-	"/",
-	jwtAuthMiddleware,
-	(req, res) => {
-		try {
-
-
-			console.log(req.body);
-		} catch (err) {
-			console.log(err);
-			res.status(500).json({ error: "Internal server error" });
+hotelRouter.post("/", jwtAuthMiddleware, async (req, res) => {
+	try {
+		const body = schemaHotel.safeParse(req.body);
+		if (!body.success) {
+			res.status(400).json({ error: "Wrong format of hotel" });
+			return;
 		}
+		const accessToken = req.headers["authorization"]?.replace(
+			"Bearer ",
+			""
+		);
+		if (!accessToken) {
+			res.status(403).json({ error: "Not authorized" });
+			return;
+		}
+		const { data } = body;
+		const decoded = jwt.decode(accessToken) as {
+			userId?: string;
+		};
+		if (decoded.userId) {
+			res.status(400).json({ error: "Bad Access token" });
+			return;
+		}
+
+		const createdHotel = await prisma.hotel.create({
+			data: {
+				name: data.name,
+				description: data.description,
+				destination: data.destination,
+				owner: {
+					connect: {
+						id: decoded.userId,
+					},
+				},
+			},
+		});
+
+		res.status(201).json({ data: { hotelId: createdHotel.id } });
+	} catch (err) {
+		console.log(err);
+		res.status(500).json({ error: "Internal server error" });
 	}
-);
+});
 
 export default hotelRouter;

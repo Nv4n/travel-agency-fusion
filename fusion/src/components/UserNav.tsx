@@ -1,5 +1,5 @@
 import { VITE_JWT_SESSION_NAME } from "@/client/App";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -10,48 +10,59 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { UserNameContext } from "@/pages/Layout";
 import {
-	IconHome,
 	IconHomePlus,
 	IconLayoutDashboard,
 	IconLogout,
 	IconUserEdit,
 } from "@tabler/icons-react";
-import { useContext } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Skeleton } from "./ui/skeleton";
+import { useContext } from "react";
+import { UserNameContext } from "@/pages/Layout";
 
 export const UserNav = () => {
-	const [userName, _] = useContext(UserNameContext);
+	const [nameContext, _] = useContext(UserNameContext);
 	const accessToken = sessionStorage.getItem(VITE_JWT_SESSION_NAME);
+	const { data, isLoading } = useQuery({
+		queryKey: ["user-name"],
+		queryFn: async () => {
+			const resp = await fetch("/api/users/name", {
+				headers: {
+					Authorization: `Bearer ${accessToken || ""}`,
+				},
+			});
+			if (resp.status === 200) {
+				const { data } = (await resp.json()) as {
+					data: { name: string };
+				};
+				return data.name;
+			}
+			return nameContext || "";
+		},
+	});
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
-	const alias = userName
-		.split(" ")
-		.map((name) => name.charAt(0).toUpperCase())
-		.join("");
+	const alias =
+		!isLoading && data
+			? data
+					.split(" ")
+					.map((name) => name.charAt(0).toUpperCase())
+					.join("")
+			: "";
 
 	const onLogOut = async () => {
-		console.log("inside");
 		await fetch("/api/users/logout", {
 			method: "DELETE",
 		});
-		console.log("after fetch");
 
 		sessionStorage.removeItem(VITE_JWT_SESSION_NAME);
 		navigate("/");
 	};
 
 	return !accessToken ? (
-		pathname === "/login" || pathname === "/register" ? (
-			<>
-				<Link to={"/"}>
-					<Button variant="outline" className="transition-all">
-						<IconHome></IconHome>
-					</Button>
-				</Link>
-			</>
-		) : (
+		!(pathname === "/login" || pathname === "/register") && (
 			<div className="flex gap-2">
 				<Link to={"/login"}>
 					<Button variant="outline" className="transition-all">
@@ -75,7 +86,11 @@ export const UserNav = () => {
 					>
 						<Avatar className="grid h-10 w-10 place-items-center">
 							<AvatarFallback className="text-lg ">
-								{alias}
+								{isLoading ? (
+									<Skeleton className="h-9 w-9"></Skeleton>
+								) : (
+									alias
+								)}
 							</AvatarFallback>
 						</Avatar>
 					</Button>
@@ -84,7 +99,13 @@ export const UserNav = () => {
 					className="w-56 rounded-md border-2 border-solid border-zinc-200 p-1"
 					align="end"
 				>
-					<DropdownMenuLabel>{userName}</DropdownMenuLabel>
+					<DropdownMenuLabel>
+						{isLoading ? (
+							<Skeleton className="h-4 w-16"></Skeleton>
+						) : (
+							data
+						)}
+					</DropdownMenuLabel>
 					<DropdownMenuSeparator></DropdownMenuSeparator>
 					<DropdownMenuGroup>
 						<DropdownMenuItem>
