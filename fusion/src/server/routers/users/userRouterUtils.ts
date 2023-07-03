@@ -1,3 +1,4 @@
+import { hoursToMilliseconds, minutesToMilliseconds } from "date-fns";
 import { prisma } from "../../../server/db";
 import { t3Env } from "../../../t3Env";
 import { type User } from "@prisma/client";
@@ -33,52 +34,53 @@ export const generateRefreshToken = (
 	);
 };
 
-export const getVerifiedTokens = async (
-	accessToken: string,
-	refreshToken: string,
-	user: Pick<User, "email" | "id">
-) => {
-	let returnAccessToken = accessToken;
-	let returnRefreshToken = refreshToken;
+export const getVerifiedTokens = async (user: Pick<User, "email" | "id">) => {
+	const dbRefreshToken = await prisma.token.findFirst({
+		where: {
+			userId: user.id,
+			valid: true,
+		},
+		select: {
+			id: true,
+			hash: true,
+			valid: true,
+		},
+	});
+
+	let refreshToken;
 	try {
-		jwt.verify(accessToken, t3Env.ACCESS_SECRET);
-	} catch (err) {
+		if (!dbRefreshToken || !dbRefreshToken.valid) {
+			throw new Error("Invalidated db Refresh token");
+		}
 		try {
-			jwt.verify(refreshToken, t3Env.REFRESH_SECRET);
-			const dbRefreshToken = await prisma.token.findFirst({
-				where: {
-					userId: user.id,
-					hash: refreshToken,
-				},
-				select: {
-					hash: true,
-					valid: true,
-				},
-			});
-
-			if (!dbRefreshToken || !dbRefreshToken.valid) {
-				throw new Error("Invalidated db Refresh token");
-			}
-			returnAccessToken = generateAccessToken(user);
+			jwt.verify(dbRefreshToken?.hash, t3Env.REFRESH_SECRET);
+			refreshToken = dbRefreshToken.hash;
 		} catch (err) {
-			console.log(err);
-
-			returnAccessToken = generateAccessToken(user);
-			const jti = crypto.randomUUID();
-			returnRefreshToken = generateRefreshToken(user, jti);
-			await prisma.token.create({
+			await prisma.token.update({
+				where: {
+					id: dbRefreshToken.id,
+				},
 				data: {
-					id: jti,
-					hash: returnRefreshToken,
-					user: {
-						connect: {
-							id: user.id,
-						},
-					},
+					valid: false,
 				},
 			});
 		}
+	} catch (err) {
+		const jti = crypto.randomUUID();
+		refreshToken = generateRefreshToken(user, jti);
+		await prisma.token.create({
+			data: {
+				id: jti,
+				hash: refreshToken,
+				user: {
+					connect: {
+						id: user.id,
+					},
+				},
+			},
+		});
 	}
+	const accessToken = generateAccessToken(user);
 
-	return { accessToken: returnAccessToken, refreshToken: returnRefreshToken };
+	return { accessToken: accessToken, refreshToken: refreshToken };
 };

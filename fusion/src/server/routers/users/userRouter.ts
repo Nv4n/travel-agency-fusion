@@ -132,29 +132,15 @@ userRouter.post("/login", async (req, res) => {
 			return;
 		}
 
-		const accessToken = generateAccessToken(foundUser);
-		const refreshToken = await prisma.token.findFirst({
-			where: {
-				userId: foundUser.id,
-			},
-			select: {
-				hash: true,
-				valid: true,
-			},
-		});
 
 		const { accessToken: access, refreshToken: refresh } =
 			await getVerifiedTokens(
-				accessToken,
-				refreshToken?.hash || "",
 				foundUser
 			);
 		res.status(200)
 			.cookie(t3Env.JWT_COOKIE_NAME, refresh, {
-				maxAge: hoursToMilliseconds(3),
+				maxAge: Date.now() + hoursToMilliseconds(3),
 				httpOnly: true,
-				secure: true,
-				sameSite: "strict",
 			})
 			.json({
 				data: {

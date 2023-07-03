@@ -94,32 +94,11 @@ hotelRouter.get("/destinations", async (req, res) => {
 });
 //TODO ADD HOTEL
 hotelRouter.post(
-	"/add",
+	"/",
 	jwtAuthMiddleware,
-	upload.single("hotelImage"),
-	async (req, res) => {
+	(req, res) => {
 		try {
-			console.log(req.file);
-			console.log(req.files);
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-			if (req.body.hotelImage) {
-				console.log("here");
 
-				const resp = await subabase.storage
-					.from("images")
-					// eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-member-access
-					.upload(
-						// eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-member-access
-						`test/${req.body.hotelImage}`,
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-						req.body.hotelImage,
-						{
-							cacheControl: "3600",
-							upsert: false,
-						}
-					);
-				console.log(resp);
-			}
 
 			console.log(req.body);
 		} catch (err) {

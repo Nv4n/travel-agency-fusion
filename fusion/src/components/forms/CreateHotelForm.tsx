@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { schemaHotel } from "@/model/formSchemas/SchemasHotel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { City } from "country-state-city";
-import { createRef, useRef, useState } from "react";
+import { createRef, useId, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { type z } from "zod";
@@ -23,6 +23,7 @@ import { Separator } from "../ui/separator";
 import { ScrollArea } from "../ui/scroll-area";
 import { Textarea } from "../ui/textarea";
 import { VITE_JWT_SESSION_NAME } from "@/client/App";
+import { Label } from "../ui/label";
 
 type Hotel = z.infer<typeof schemaHotel>;
 export type HotelFormProps = React.FormHTMLAttributes<HTMLFormElement>;
@@ -48,15 +49,13 @@ export const CreateHotelForm = ({ className }: HotelFormProps) => {
 	});
 
 	const onCreateSubmit = async (values: Hotel) => {
-		console.log(values);
 		const formData = new FormData();
+		formData.append("hotelImage", (values.hotelImage as string) || "");
+		formData.append("name", values.name);
+		formData.append("destination", values.destination);
+		formData.append("description", values.description);
+		console.log(formData.get("hotelImage"));
 
-		Object.entries(values).forEach(([key, value]) => {
-			formData.append(key, String(value));
-		});
-		if (fileInput.current) {
-			formData.set("hotelImage", fileInput.current.value);
-		}
 		const accessToken = sessionStorage.getItem(VITE_JWT_SESSION_NAME);
 		const resp = await fetch(`/api/hotels/add`, {
 			method: "POST",
@@ -84,6 +83,18 @@ export const CreateHotelForm = ({ className }: HotelFormProps) => {
 		const results = index.search(query);
 		const cityNames = results.map((res) => res.item);
 		setCities(cityNames);
+	};
+
+	const onFileChoosen = (file: File | null | undefined) => {
+		const fileReader = new FileReader();
+		fileReader.onloadend = (e) => {
+			const content = fileReader.result;
+			console.log(content);
+			form.setValue("hotelImage", content);
+		};
+		if (file) {
+			fileReader.readAsDataURL(file);
+		}
 	};
 
 	return (
@@ -141,6 +152,7 @@ export const CreateHotelForm = ({ className }: HotelFormProps) => {
 											{cities.map((city) => {
 												return (
 													<div
+														key={city}
 														className="cursor-pointer text-sm hover:bg-zinc-400"
 														onClick={(e) => {
 															setCities([]);
@@ -181,26 +193,21 @@ export const CreateHotelForm = ({ className }: HotelFormProps) => {
 							</FormItem>
 						)}
 					/>
-					<FormField
-						control={form.control}
-						name="hotelImage"
-						render={({ field }) => (
-							<FormItem className="group relative space-y-1">
-								<FormLabel>Hotel image</FormLabel>
-								<FormControl>
-									<>
-										<Input
-											type="file"
-											accept="image/png, image/jpeg, image/jpg, image/webp"
-											{...field}
-											ref={fileInput}
-										/>
-									</>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
+
+					<div className="group relative space-y-1">
+						<Label>Hotel image</Label>
+						<Input
+							type="file"
+							accept="image/png, image/jpeg, image/jpg, image/webp"
+							// {...[field.value, field.ref]}
+							// onChange={(e) => {
+							// 	onFileChosen(
+							// 		e.target.files?.item(0)
+							// 	);
+							// }}
+							disabled
+						/>
+					</div>
 
 					<Button type="submit">Submit your hotel</Button>
 				</form>

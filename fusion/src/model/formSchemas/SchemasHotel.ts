@@ -12,7 +12,6 @@ const ACCEPTED_IMAGE_TYPES = [
 ];
 
 export const schemaHotel = z.object({
-	hotelImage: z.any().refine((val) => val, "You should provide an image"),
 	name: z
 		.string()
 		.max(255)
