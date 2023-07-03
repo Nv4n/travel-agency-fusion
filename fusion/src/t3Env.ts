@@ -34,6 +34,8 @@ export const t3Env = createEnv({
 		DATABASE_URL: z.string().url(),
 		DIRECT_URL: z.string().url(),
 		JWT_COOKIE_NAME: z.string().nonempty(),
+		SUPABASE_URL: z.string(),
+		SUPABASE_ANON: z.string(),
 		NODE_ENV: z.enum(["development", "test", "production"]),
 	},
 
@@ -53,6 +55,8 @@ export const t3Env = createEnv({
 		DATABASE_URL: envProps.VITE_DATABASE_URL,
 		DIRECT_URL: envProps.VITE_DIRECT_URL,
 		JWT_COOKIE_NAME: envProps.VITE_JWT_COOKIE_NAME,
+		SUPABASE_URL: envProps.VITE_SUPABASE_URL,
+		SUPABASE_ANON: envProps.VITE_SUPABASE_ANON,
 		NODE_ENV: process.env.NODE_ENV,
 	},
 	// Called when the schema validation fails.

@@ -12,21 +12,12 @@ const ACCEPTED_IMAGE_TYPES = [
 ];
 
 export const schemaHotel = z.object({
-	image: z
-		.instanceof(FileList)
-		.refine((files) => files?.length !== 1, "Image requered") // if no file files?.length === 0, if file files?.length === 1
-		.refine((files) => {
-			const file = files.item(0);
-			return file && file.size >= MAX_FILE_SIZE;
-		}, `Max file size is 5MB.`) // this should be greater than or equals (>=) not less that or equals (<=)
-		.refine(
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-			(files) =>
-				ACCEPTED_IMAGE_TYPES.includes(files?.item(0)?.type || ""),
-			".jpg, .jpeg, .png and .webp files are accepted."
-		),
-
-	name: z.string().max(255).regex(namesRegex).nonempty(),
+	hotelImage: z.any().refine((val) => val, "You should provide an image"),
+	name: z
+		.string()
+		.max(255)
+		.regex(namesRegex, "Hotel name is not possible")
+		.nonempty(),
 	description: z
 		.string()
 		.min(25, "Description is less than the legitamate length")

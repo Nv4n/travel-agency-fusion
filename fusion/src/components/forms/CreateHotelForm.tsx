@@ -11,23 +11,18 @@ import { Input } from "@/components/ui/input";
 import { schemaHotel } from "@/model/formSchemas/SchemasHotel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { City } from "country-state-city";
-import { useState } from "react";
+import { createRef, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { type z } from "zod";
 import { FormErrorAlert } from "./FormErrorAlert";
 import { hidePlaceholderStyles, peekLabelStyles } from "./formStyles";
 import Fuse from "fuse.js";
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectLabel,
-	SelectTrigger,
-} from "@/components/ui/select";
+
 import { Separator } from "../ui/separator";
 import { ScrollArea } from "../ui/scroll-area";
+import { Textarea } from "../ui/textarea";
+import { VITE_JWT_SESSION_NAME } from "@/client/App";
 
 type Hotel = z.infer<typeof schemaHotel>;
 export type HotelFormProps = React.FormHTMLAttributes<HTMLFormElement>;
@@ -36,11 +31,12 @@ export const CreateHotelForm = ({ className }: HotelFormProps) => {
 	const possibleDestinations =
 		City.getCitiesOfCountry("BG")?.map((city) => city.name) || [];
 	const index = new Fuse(possibleDestinations, {});
-	console.log(index);
 
 	const [cities, setCities] = useState<string[]>([]);
 	const [errorMsg, setErrorMsg] = useState("");
+	const fileInput = createRef<HTMLInputElement>();
 	const navigate = useNavigate();
+
 	const form = useForm<Hotel>({
 		resolver: zodResolver(schemaHotel),
 		defaultValues: {
@@ -51,17 +47,25 @@ export const CreateHotelForm = ({ className }: HotelFormProps) => {
 		mode: "onChange",
 	});
 
-	const onCreateSubmit = (values: Hotel) => {
+	const onCreateSubmit = async (values: Hotel) => {
 		console.log(values);
+		const formData = new FormData();
 
-		// const resp = await fetch(`/api/hotels/`, {
-		// 	method: "POST",
-		// 	headers: {
-		// 		"content-type": "application/json",
-		// 	},
-		// 	body: JSON.stringify(values),
-		// });
-
+		Object.entries(values).forEach(([key, value]) => {
+			formData.append(key, String(value));
+		});
+		if (fileInput.current) {
+			formData.set("hotelImage", fileInput.current.value);
+		}
+		const accessToken = sessionStorage.getItem(VITE_JWT_SESSION_NAME);
+		const resp = await fetch(`/api/hotels/add`, {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${accessToken || ""}`,
+			},
+			body: formData,
+		});
+		console.log(resp);
 		// if (resp.status >= 300) {
 		// 	const { error } = (await resp.json()) as { error: string };
 		// 	setErrorMsg(error);
@@ -79,19 +83,16 @@ export const CreateHotelForm = ({ className }: HotelFormProps) => {
 	const onSearch = (query: string) => {
 		const results = index.search(query);
 		const cityNames = results.map((res) => res.item);
-		console.log(cityNames);
 		setCities(cityNames);
-
-		// Do something with the search results
 	};
 
 	return (
 		<>
 			<Form {...form}>
 				<form
-					encType="multipart/form-data"
 					onSubmit={form.handleSubmit(onCreateSubmit)}
 					className={"space-y-8 " + (className ? className : "")}
+					encType="multipart/form-data"
 				>
 					<FormField
 						control={form.control}
@@ -142,11 +143,11 @@ export const CreateHotelForm = ({ className }: HotelFormProps) => {
 													<div
 														className="cursor-pointer text-sm hover:bg-zinc-400"
 														onClick={(e) => {
+															setCities([]);
 															form.setValue(
 																"destination",
 																city
 															);
-															setCities([]);
 														}}
 													>
 														<span>{city}</span>
@@ -163,18 +164,38 @@ export const CreateHotelForm = ({ className }: HotelFormProps) => {
 					/>
 					<FormField
 						control={form.control}
-						name="name"
+						name="description"
 						render={({ field }) => (
 							<FormItem className="group relative space-y-1">
 								<FormLabel className={peekLabelStyles}>
-									Hotel name
+									Hotel description
 								</FormLabel>
 								<FormControl>
-									<Input
+									<Textarea
 										className={hidePlaceholderStyles}
-										placeholder="Hotel name"
+										placeholder="Type your description here"
 										{...field}
 									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="hotelImage"
+						render={({ field }) => (
+							<FormItem className="group relative space-y-1">
+								<FormLabel>Hotel image</FormLabel>
+								<FormControl>
+									<>
+										<Input
+											type="file"
+											accept="image/png, image/jpeg, image/jpg, image/webp"
+											{...field}
+											ref={fileInput}
+										/>
+									</>
 								</FormControl>
 								<FormMessage />
 							</FormItem>
