@@ -1,4 +1,4 @@
-import { RouteGuardWithAuth } from "@/components/RouteGuardWithAuth";
+import { RouteGuardWithAuth } from "@/components/guards/RouteGuardWithAuth";
 import { RouteGuardWithoutAuth } from "@/components/RouteGuardWithoutAuth copy";
 import { CreateHotelForm } from "@/components/forms/CreateHotelForm";
 import { AuthenticateUser } from "@/pages/AuthenticateUser";
@@ -66,7 +66,6 @@ const App = () => {
 	return (
 		<QueryClientProvider client={queryClient}>
 			<RouterProvider router={router}></RouterProvider>
-			
 		</QueryClientProvider>
 	);
 };

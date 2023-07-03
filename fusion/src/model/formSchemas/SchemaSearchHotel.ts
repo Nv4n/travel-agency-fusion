@@ -1,9 +1,11 @@
 import { z } from "zod";
-import { IntegerString } from "./schemaUtilities";
+import { IntegerString, namesRegex } from "./schemaUtilities";
 
 export const searchHotelSchema = z.object({
 	destination: z
 		.string()
+		.max(255)
+		.regex(namesRegex, "Hotel name is not possible")
 		.nonempty({ message: "You should choose your destination" }),
 	dateRange: z
 		.object(

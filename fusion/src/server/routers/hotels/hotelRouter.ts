@@ -71,7 +71,7 @@ hotelRouter.get("/destinations", async (req, res) => {
 		res.status(500).json({ error: "Internal server error" });
 	}
 });
-//TODO ADD HOTEL
+
 hotelRouter.post("/", jwtAuthMiddleware, async (req, res) => {
 	try {
 		const body = schemaHotel.safeParse(req.body);

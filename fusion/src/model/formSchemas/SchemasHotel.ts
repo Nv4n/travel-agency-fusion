@@ -1,7 +1,7 @@
 import { z } from "zod";
+import { namesRegex } from "./schemaUtilities";
 
-const namesRegex =
-	/^(([A-Z][a-z]+( [A-Z][a-z]+)*)|([А-Я][а-я]+( [А-Я][а-я]+)*))$/;
+
 
 export const schemaHotel = z.object({
 	name: z

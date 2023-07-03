@@ -198,6 +198,51 @@ userRouter.get("/name", jwtAuthMiddleware, async (req, res) => {
 });
 
 
-userRouter.get('/refresh-token')
+userRouter.get("/refresh-token", async (req, res) => {
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+	const authCookie = req.cookies[t3Env.JWT_COOKIE_NAME] as string | undefined;
+	if (!authCookie) {
+		res.status(401).json({ redirect: "/login" });
+		return;
+	}
+
+	try {
+		const decoded = jwt.verify(authCookie, t3Env.REFRESH_SECRET) as {
+			userId?: string;
+			email?: string;
+			jwtId?: string;
+		};
+		if (!decoded.email || !decoded.userId || !decoded.jwtId) {
+			res.status(401).json({ redirect: "/login" });
+			return;
+		}
+
+		const dbToken = await prisma.token.findFirst({
+			where: {
+				id: decoded.jwtId,
+				userId: decoded.userId,
+				valid: true,
+			},
+			select: {
+				hash: true,
+			},
+		});
+
+		if (!dbToken || dbToken.hash !== authCookie) {
+			res.status(401)
+				.clearCookie(t3Env.JWT_COOKIE_NAME)
+				.json({ redirect: "/login" });
+			return;
+		}
+		const accessToken = generateAccessToken({
+			id: decoded.userId,
+			email: decoded.email,
+		});
+		res.status(200).json({ data: { accessToken: accessToken } });
+	} catch (err) {
+		res.status(401).json({ redirect: "/login" });
+		return;
+	}
+});
 
 export default userRouter;

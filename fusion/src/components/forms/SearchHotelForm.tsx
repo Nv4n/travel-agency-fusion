@@ -73,11 +73,40 @@ export const SearchHotelForm = ({
 								Destination
 							</FormLabel>
 							<FormControl>
-								<Input
-									className={hidePlaceholderStyles}
-									placeholder="Destination"
-									{...field}
-								/>
+								<>
+									<Input
+										className={hidePlaceholderStyles}
+										placeholder="Destination"
+										{...field}
+									/>
+									<ScrollArea
+										className={`${
+											cities.length ? "h-48" : "sr-only"
+										}  w-96 rounded-md border`}
+									>
+										{cities.map((city) => {
+											return (
+												<div
+													key={city}
+													className="cursor-pointer text-sm hover:bg-zinc-400"
+													onClick={(e) => {
+														setCities([]);
+														form.setValue(
+															"destination",
+															city
+														);
+														form.clearErrors(
+															"description"
+														);
+													}}
+												>
+													<span>{city}</span>
+													<Separator className="my-2" />
+												</div>
+											);
+										})}
+									</ScrollArea>
+								</>
 							</FormControl>
 							<FormMessage />
 						</FormItem>

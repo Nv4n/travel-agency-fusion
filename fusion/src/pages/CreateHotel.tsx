@@ -1,4 +1,4 @@
-import { RouteGuardWithAuth } from "@/components/RouteGuardWithAuth";
+import { RouteGuardWithAuth } from "@/components/guards/RouteGuardWithAuth";
 import { CreateHotelForm } from "@/components/forms/CreateHotelForm";
 
 export const CreateHotel = () => {

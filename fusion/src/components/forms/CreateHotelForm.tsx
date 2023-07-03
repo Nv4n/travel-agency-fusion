@@ -11,19 +11,19 @@ import { Input } from "@/components/ui/input";
 import { schemaHotel } from "@/model/formSchemas/SchemasHotel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { City } from "country-state-city";
-import { createRef, useId, useRef, useState } from "react";
+import Fuse from "fuse.js";
+import { createRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { type z } from "zod";
 import { FormErrorAlert } from "./FormErrorAlert";
 import { hidePlaceholderStyles, peekLabelStyles } from "./formStyles";
-import Fuse from "fuse.js";
 
-import { Separator } from "../ui/separator";
-import { ScrollArea } from "../ui/scroll-area";
-import { Textarea } from "../ui/textarea";
 import { VITE_JWT_SESSION_NAME } from "@/client/App";
-import { Label } from "../ui/label";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 
 type Hotel = z.infer<typeof schemaHotel>;
 export type HotelFormProps = React.FormHTMLAttributes<HTMLFormElement>;
@@ -35,7 +35,6 @@ export const CreateHotelForm = ({ className }: HotelFormProps) => {
 
 	const [cities, setCities] = useState<string[]>([]);
 	const [errorMsg, setErrorMsg] = useState("");
-	const fileInput = createRef<HTMLInputElement>();
 	const navigate = useNavigate();
 
 	const form = useForm<Hotel>({
@@ -63,9 +62,25 @@ export const CreateHotelForm = ({ className }: HotelFormProps) => {
 				needRefresh?: string;
 			};
 			if (redirect) {
+				sessionStorage.removeItem(VITE_JWT_SESSION_NAME);
 				navigate(redirect);
 			}
 			if (needRefresh) {
+				const refreshResp = await fetch("/api/users/refresh-token");
+				if (refreshResp.status >= 300) {
+					const data = (await refreshResp.json()) as {
+						redirect: string;
+					};
+					sessionStorage.removeItem(VITE_JWT_SESSION_NAME);
+					navigate(data.redirect);
+				}
+
+				const { data } = (await refreshResp.json()) as {
+					data: { accessToken: string };
+				};
+				sessionStorage.setItem(VITE_JWT_SESSION_NAME, data.accessToken);
+				setErrorMsg("Refresh occured, please send your request again");
+				return;
 			}
 		}
 		if (resp.status >= 300) {

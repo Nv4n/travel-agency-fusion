@@ -1,4 +1,4 @@
-import { HomeButton } from "@/components/HomeButton";
+import { HomeButton } from "@/components/buttons/HomeButton";
 import { ThemeChanger } from "@/components/ThemeChanger";
 import { UserNav } from "@/components/UserNav";
 import { createContext, useState } from "react";

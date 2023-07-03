@@ -13,3 +13,6 @@ export const IntegerString = <S extends ZodNumber | ZodOptional<ZodNumber>>(
 		schema
 	) as z.ZodEffects<z.ZodTypeAny, number, unknown>;
 };
+
+export const namesRegex =
+	/^(([A-Z][a-z]+( [A-Z][a-z]+)*)|([А-Я][а-я]+( [А-Я][а-я]+)*))$/;
