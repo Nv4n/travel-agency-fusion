@@ -49,20 +49,10 @@ userRouter.post("/register", async (req: Request, res: Response) => {
 				},
 			},
 		});
-		const jti = crypto.randomUUID();
-		const accessToken = generateAccessToken(resultUser);
-		const refreshToken = generateRefreshToken(resultUser, jti);
-		await prisma.token.create({
-			data: {
-				id: jti,
-				hash: refreshToken,
-				user: {
-					connect: {
-						id: resultUser.id,
-					},
-				},
-			},
-		});
+
+		const { accessToken, refreshToken } = await getVerifiedTokens(
+			resultUser
+		);
 
 		res.status(201)
 			.cookie(t3Env.JWT_COOKIE_NAME, refreshToken, {
@@ -197,7 +187,6 @@ userRouter.get("/name", jwtAuthMiddleware, async (req, res) => {
 	}
 });
 
-
 userRouter.get("/refresh-token", async (req, res) => {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
 	const authCookie = req.cookies[t3Env.JWT_COOKIE_NAME] as string | undefined;
@@ -222,6 +211,7 @@ userRouter.get("/refresh-token", async (req, res) => {
 				id: decoded.jwtId,
 				userId: decoded.userId,
 				valid: true,
+				expireDate: { gt: new Date(Date.now()) },
 			},
 			select: {
 				hash: true,

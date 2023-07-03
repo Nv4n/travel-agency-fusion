@@ -110,6 +110,39 @@
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /api/hotels/{hotelId}:
+    get:
+      tags:
+        - Hotel
+      summary: Get hotel details
+      parameters:
+        - in: path
+          name: hotelId
+          required: true
+          schema:
+            type: string
+          description: The ID of the hotel to retrieve
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HotelDetailsResponse'
+        '404':
+          description: Hotel not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+     
+  
   components:
     schemas:
       HotelRequestBody:
@@ -142,5 +175,96 @@
             type: string
         required:
           - error
+
+      HotelDetailsResponse:
+        type: object
+        properties:
+          data:
+            type: object
+            properties:
+              hotel:
+                $ref: '#/components/schemas/Hotel'
+              rooms:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Room'
+              reviews:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Review'
+              isOwner:
+                type: boolean
+        required:
+          - data
   
-       
+      Hotel:
+        type: object
+        properties:
+          id:
+            type: string
+          name:
+            type: string
+          description:
+            type: string
+          destination:
+            type: string
+        required:
+          - id
+          - name
+          - description
+          - destination
+  
+      Room:
+        type: object
+        properties:
+          id:
+            type: string
+          quantity:
+            type: integer
+          maxGuests:
+            type: integer
+          price:
+            type: number
+        required:
+          - id
+          - quantity
+          - maxGuests
+          - price
+  
+      Review:
+        type: object
+        properties:
+          id:
+            type: string
+          rating:
+            type: integer
+          content:
+            type: string
+          user:
+            $ref: '#/components/schemas/User'
+        required:
+          - id
+          - rating
+          - content
+          - user
+  
+      User:
+        type: object
+        properties:
+          fname:
+            type: string
+          lname:
+            type: string
+        required:
+          - fname
+          - lname
+  
+      ErrorResponse:
+        type: object
+        properties:
+          error:
+            type: string
+        required:
+          - error
+    
+         

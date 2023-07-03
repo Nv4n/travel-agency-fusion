@@ -49,10 +49,13 @@ export const CreateHotelForm = ({ className }: HotelFormProps) => {
 
 	const onCreateSubmit = async (values: Hotel) => {
 		const accessToken = sessionStorage.getItem(VITE_JWT_SESSION_NAME);
+		console.log(values);
+
 		const resp = await fetch(`/api/hotels/`, {
 			method: "POST",
 			headers: {
-				Authorization: `Bearer ${accessToken || ""}`,
+				authorization: `Bearer ${accessToken || ""}`,
+				"content-type": "application/json",
 			},
 			body: JSON.stringify(values),
 		});
@@ -163,9 +166,6 @@ export const CreateHotelForm = ({ className }: HotelFormProps) => {
 															form.setValue(
 																"destination",
 																city
-															);
-															form.clearErrors(
-																"destination"
 															);
 														}}
 													>

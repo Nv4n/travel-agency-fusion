@@ -17,26 +17,12 @@ interface HotelCardProps {
 	hotelName: string;
 }
 
-const notifications = [
-	{
-		title: "Your call has been confirmed.",
-		description: "1 hour ago",
-	},
-	{
-		title: "You have a new message!",
-		description: "1 hour ago",
-	},
-	{
-		title: "Your subscription is expiring soon!",
-		description: "2 hours ago",
-	},
-];
 
 type CardProps = React.ComponentProps<typeof Card>;
 
 export const HotelCard = ({ className, ...props }: CardProps) => {
 	return (
-		<Link to={"/search/details/test"} className="font-[poppins]">
+		<Link to={"/search/details/test"}>
 			<Card
 				className={cn("group relative w-[25rem]", className)}
 				{...props}

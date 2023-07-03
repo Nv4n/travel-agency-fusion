@@ -70,7 +70,12 @@ hotelRouter.get("/destinations", async (req, res) => {
 
 hotelRouter.post("/", jwtAuthMiddleware, async (req, res) => {
 	try {
+		console.log("BODY BELLOW");
+
+		console.log(req.body);
+
 		const body = schemaHotel.safeParse(req.body);
+
 		if (!body.success) {
 			res.status(400).json({ error: "Wrong format of hotel" });
 			return;
@@ -87,7 +92,9 @@ hotelRouter.post("/", jwtAuthMiddleware, async (req, res) => {
 		const decoded = jwt.decode(accessToken) as {
 			userId?: string;
 		};
-		if (decoded.userId) {
+		console.log(decoded);
+
+		if (!decoded.userId) {
 			res.status(400).json({ error: "Bad Access token" });
 			return;
 		}
@@ -135,6 +142,7 @@ hotelRouter.get("/:hotelId", async (req, res) => {
 							id: decoded.jwtId,
 							userId: decoded.userId,
 							valid: true,
+							expireDate: { gt: new Date(Date.now()) },
 						},
 						select: {
 							hash: true,

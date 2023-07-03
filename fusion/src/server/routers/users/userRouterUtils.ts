@@ -2,6 +2,7 @@ import { type User } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import { prisma } from "../../../server/db";
 import { t3Env } from "../../../t3Env";
+import { hoursToMilliseconds } from "date-fns";
 
 export const generateAccessToken = (user: Pick<User, "email" | "id">) => {
 	return jwt.sign(
@@ -34,10 +35,12 @@ export const generateRefreshToken = (
 };
 
 export const getVerifiedTokens = async (user: Pick<User, "email" | "id">) => {
+	const date = Date.now();
 	const dbRefreshToken = await prisma.token.findFirst({
 		where: {
 			userId: user.id,
 			valid: true,
+			expireDate: { gt: new Date(date) },
 		},
 		select: {
 			id: true,
@@ -46,7 +49,7 @@ export const getVerifiedTokens = async (user: Pick<User, "email" | "id">) => {
 		},
 	});
 
-	let refreshToken;
+	let refreshToken = "";
 	try {
 		if (!dbRefreshToken || !dbRefreshToken.valid) {
 			throw new Error("Invalidated db Refresh token");
@@ -67,6 +70,7 @@ export const getVerifiedTokens = async (user: Pick<User, "email" | "id">) => {
 	} catch (err) {
 		const jti = crypto.randomUUID();
 		refreshToken = generateRefreshToken(user, jti);
+		const expireDate = Date.now() + hoursToMilliseconds(3);
 		await prisma.token.create({
 			data: {
 				id: jti,
@@ -76,6 +80,7 @@ export const getVerifiedTokens = async (user: Pick<User, "email" | "id">) => {
 						id: user.id,
 					},
 				},
+				expireDate: new Date(expireDate),
 			},
 		});
 	}

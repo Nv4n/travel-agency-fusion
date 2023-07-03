@@ -2,10 +2,9 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
-     previewFeatures = ["jsonProtocol"]
+    provider        = "prisma-client-js"
+    previewFeatures = ["jsonProtocol"]
 }
-
 
 datasource db {
     provider     = "postgresql"
@@ -39,13 +38,14 @@ model User {
 }
 
 model Token {
-    id        String   @id @unique @default(cuid())
-    hash      String
-    userId    String
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    valid     Boolean  @default(true)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    id         String   @id @unique @default(cuid())
+    hash       String
+    userId     String
+    user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    valid      Boolean  @default(true)
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+    expireDate DateTime @default(now())
 
     @@index([userId])
 }
@@ -53,7 +53,7 @@ model Token {
 model Password {
     hash String
 
-    userId String @unique @id
+    userId String @id @unique
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 

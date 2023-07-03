@@ -3,6 +3,7 @@ import { AuthenticateUser } from "@/pages/AuthenticateUser";
 import { CreateHotel } from "@/pages/CreateHotel";
 import { Home } from "@/pages/Home";
 import { HotelDetails } from "@/pages/HotelDetails";
+import { Hotels } from "@/pages/Hotels";
 import { Layout } from "@/pages/Layout";
 import { NotFound } from "@/pages/NotFound";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -42,12 +43,16 @@ const router = createBrowserRouter([
 				element: <CreateHotel></CreateHotel>,
 			},
 			{
-				path: "/hotels/:hotelId",
+				path: "hotels/:hotelId",
 				element: <HotelDetails></HotelDetails>,
 			},
 			{
-				path: "/404",
+				path: "404",
 				element: <NotFound></NotFound>,
+			},
+			{
+				path: "hotels",
+				element: <Hotels></Hotels>,
 			},
 			// {
 			// 	path: "hotels/:hotelId/edit",

@@ -23,6 +23,7 @@ import Fuse from "fuse.js";
 import { useQuery } from "@tanstack/react-query";
 import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
+import { DESTRUCTION } from "dns";
 
 export interface SearchHotelProps
 	extends React.FormHTMLAttributes<HTMLFormElement> {
@@ -35,17 +36,29 @@ export const SearchHotelForm = ({
 	minPrice,
 	maxPrice,
 }: SearchHotelProps) => {
+	const [index, setIndex] = useState(new Fuse<string>([]));
 	const { data: possibleDestinations, isLoading } = useQuery({
 		queryKey: ["possible-destinations"],
 		queryFn: async () => {
 			const resp = await fetch("/api/hotels/destinations/all");
 			if (resp.status === 200) {
-				return [""];
+				const { data } = (await resp.json()) as {
+					data: {
+						destinations: {
+							_count: { destination: number };
+							destination: string;
+						}[];
+					};
+				};
+				const desinations = data.destinations.map(
+					(dest) => dest.destination
+				);
+				setIndex(new Fuse(desinations));
+				return desinations;
 			}
-			return [""];
+			return [];
 		},
 	});
-	const index = new Fuse(isLoading ? [] : possibleDestinations || [], {});
 
 	const [cities, setCities] = useState<string[]>([]);
 
