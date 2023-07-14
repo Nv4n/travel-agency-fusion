@@ -96,3 +96,85 @@
      responses:
        '200':
           description: OK
+
+ /api/users/refresh-token:
+   get:
+     summary: Refresh access token
+     responses:
+       '200':
+         description: Successful response
+         content:
+           application/json:
+             schema:
+               type: object
+               properties:
+                 data:
+                   type: object
+                   properties:
+                     accessToken:
+                       type: string
+       '401':
+         description: Unauthorized
+         content:
+           application/json:
+             schema:
+               type: object
+               properties:
+                 redirect:
+                   type: string
+     tags:
+       - User
+
+ /api/users/name:
+   get:
+     summary: Get user's full name
+     description: Returns the full name of the authenticated user.
+     tags:
+      - User
+     security:
+       - BearerAuth: []
+     responses:
+       '200':
+         description: Successful operation
+         content:
+           application/json:
+             schema:
+               type: object
+               properties:
+                 data:
+                   type: object
+                   properties:
+                     name:
+                       type: string
+       '400':
+         description: Bad access token
+         content:
+           application/json:
+             schema:
+               type: object
+               properties:
+                 error:
+                   type: string
+       '403':
+         description: Not authorized
+         content:
+           application/json:
+             schema:
+               type: object
+               properties:
+                 error:
+                   type: string
+       '404':
+         description: User not found
+         content:
+           application/json:
+             schema:
+               type: object
+               properties:
+                 error:
+                   type: string
+ securitySchemes:
+   BearerAuth:
+     type: http
+     scheme: bearer
+     bearerFormat: JWT

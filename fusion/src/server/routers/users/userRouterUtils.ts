@@ -68,7 +68,7 @@ export const getVerifiedTokens = async (user: Pick<User, "email" | "id">) => {
 			});
 		}
 	} catch (err) {
-		const jti = crypto.randomUUID();
+		const jti = crypto.randomUUID(); 
 		refreshToken = generateRefreshToken(user, jti);
 		const expireDate = Date.now() + hoursToMilliseconds(3);
 		await prisma.token.create({
